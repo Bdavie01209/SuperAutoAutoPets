@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SuperAutoAutoPets", "SuperAutoAutoPets\SuperAutoAutoPets.pyproj", "{C840B9C8-FF5A-470D-AEC4-F4E3CD486562}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetPics", "PetPics", "{6BAD0CDC-C686-44B4-950B-98FD8C96CC1E}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SuperAutoAutoPetsServer", "SuperAutoAutoPetsServer\SuperAutoAutoPetsServer.pyproj", "{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C840B9C8-FF5A-470D-AEC4-F4E3CD486562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C840B9C8-FF5A-470D-AEC4-F4E3CD486562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F533DCF6-88C9-4805-816D-EE782FEB7318}
+	EndGlobalSection
+EndGlobal

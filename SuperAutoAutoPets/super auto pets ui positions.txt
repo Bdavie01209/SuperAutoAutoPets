@@ -1,0 +1,33 @@
+900, 550 = arena mode button
+
+230, 1000 = roll button
+
+1600, 1000 = end turn
+
+520, 700 = shop slot 1 (pet)
+
+700,700 = shop slot 2 (pet)
+
+820, 700 = shop slot 3 (pet)
+
+950,700 = shop slot 4 (pet)
+
+1100, 700 = shop slot 5 (Pet turn 9)
+
+1250, 700 = shop slot 6 (food 2nd unlock)
+
+1400, 700 = shop slot 7 (food 1st unlock)
+
+1000,1000 = freeze
+
+
+
+
+112, 75 = gold
+
+650, 70 = turn 
+
+
+410,410 = name 1
+430, 700 = name 2 
+1486,900 = confirm name
