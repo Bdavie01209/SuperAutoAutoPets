@@ -21,6 +21,19 @@
 1000,1000 = freeze
 
 
+486, 490 top left of attack in position 0
+526,526 bottom right of attack in position 0 
+
+550, 490 top left of health in position 0
+592, 525  bottom right of health in position 0 
+
+
+621, 490 top left of attack in position 1
+667, 525 bottom right of attack in position 1
+
+
+
+
 
 
 112, 75 = gold
