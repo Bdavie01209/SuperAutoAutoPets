@@ -31,6 +31,35 @@
 621, 490 top left of attack in position 1
 667, 525 bottom right of attack in position 1
 
+693, 490 top left of health in position 1
+730, 525 bottom right of health in posistion 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+475,630 = top left of shop slot 1
+600, 775 = bottom right 
+
+offset = 125, 145
+
+605, 630 = top left of shop 2 
+750, 630 = top left of shop 3
+900, 630 = top left of shop 4
+1030, 630 = top left of shop 5
+
+1170, 630 = top left of food shop 1
+1305, 630 = top left of food shop 2
 
 
 
