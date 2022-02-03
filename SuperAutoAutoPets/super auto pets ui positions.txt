@@ -20,6 +20,9 @@
 
 1000,1000 = freeze
 
+1200,700 = confirm for end turn
+
+
 
 486, 490 top left of attack in position 0
 526,526 bottom right of attack in position 0 

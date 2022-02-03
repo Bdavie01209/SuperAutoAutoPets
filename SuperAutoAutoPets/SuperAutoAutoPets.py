@@ -4,8 +4,21 @@ import time
 import socket
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-import pytesseract
+#import matplotlib.pyplot as plt
+#import pytesseract
+
+print("client")
+
+time.sleep(3) # this could be removed instead just opening the server first
+
+host = "127.0.0.1"
+port = 9012     
+#pytesseract.pytesseract.tesseract_cmd = r"C:\Users\blake\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+Server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+Server.connect((host, port))
+
+turn = 1;
 
 uidict = {
 	'1':(520, 700), #shop1
@@ -138,32 +151,23 @@ shopBoxesFoods = [((1175,630),(1300, 775)),((1315, 630 ),(1430, 775))]
 
 
 
-time.sleep(3)
-
 #should search the shop space and return the current pets in the shop
 def shopPetsFind():
-	returnlist = ["None unfrozen"] * 5
+	returnlist = ["None"] * 5
 
 	for pets in petlistpngs:
-		a = pyautogui.locateAllOnScreen(pets, region=(475, 630, 680, 145), confidence=0.97) 
+		a = pyautogui.locateAllOnScreen(pets, region=(475, 630, 680, 145), confidence=0.9) 
 
 		if a != None:
-			frozen = False
 			petname = pets
 			if "center.PNG" in petname:
 				petname = petname[:-10]
-			else:
-				petname = petname[:-10]
-				frozen = True
 			for matches in a:
 				locationfound = pyautogui.center(matches)
 				currpostion = 0
 				for rectangles in shopBoxesPets:
 					if pointinrectangle(rectangles[0],rectangles[1], locationfound):
-						if frozen:
-							returnlist[currpostion] = "".join((petname, " ", "frozen"))
-						else:
-							returnlist[currpostion] =  "".join((petname, " ", "unfrozen"))
+						returnlist[currpostion] = petname;
 					currpostion += 1
 	return returnlist
 
@@ -175,41 +179,21 @@ def pointinrectangle(tl,br,p):
 
 
 def shopFoodFind():
-	returnlist = ["None unfrozen"] * 2
+	returnlist = ["None"] * 2
 
 	for foods in foodListPngs:
-		print(foods)
-		a = pyautogui.locateAllOnScreen(foods, region=(1175, 630, 350, 145), confidence=0.95) 
+		a = pyautogui.locateAllOnScreen(foods, region=(1175, 630, 350, 145), confidence=0.99) 
 
 		if a != None:
-			frozen = False
-			foodname = foods
-			if "frozen.PNG" in foodname:
-				foodname = foodname[:-10]
-				frozen = True
-			else:
-				foodname = foodname[:-4]
-				
+			foodname = foods[:-4]
 			for matches in a:
 				locationfound = pyautogui.center(matches)
 				currpostion = 0
 				for rectangles in shopBoxesFoods:
 					if pointinrectangle(rectangles[0],rectangles[1], locationfound):
-						if frozen:
-							returnlist[currpostion] = "".join((foodname, " ", "frozen"))
-						else:
-							returnlist[currpostion] =  "".join((foodname, " ", "unfrozen"))
+						returnlist[currpostion] =  foodname
 					currpostion += 1
 	return returnlist
-
-host = "127.0.0.1"
-port = 9012     
-pytesseract.pytesseract.tesseract_cmd = r"C:\Users\blake\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
-Server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-Server.connect((host, port))
-
-print(Server.recv(1024).decode("utf-8"))
 
 
 
@@ -260,7 +244,6 @@ def HealthAndAttack():
 		health = 0
 	return health, attack
 
-
 def click2spots(spot1, spot2):
 	pyautogui.click(spot1)
 	pyautogui.click(spot2)
@@ -278,26 +261,40 @@ def clickdic(Keypressed):
 def buyslot(shoppos, slotalpha):
 	click2spots(uidict[shoppos], uidict[slotalpha])
 
+def reset():
+	turn = 1
+
 # buy message comes in as BUY shopops, slotAlpha it should only be shoppos slotalpha by the time it reaches here
 def buy(message):
 	buyslot(message[0], message[1])
 	return "PAS"
 
-def freezeunfreeze(slotalpha):
-	click2spots(uidict[slotalpha], uidict['w'])
 
-def endturn():
+def endTurn():
 	click(uidict['e'])
+	time.sleep(1)
+	click((1200,700))
+	if(turn == 1):
+		click(uidict['1'])
+		click(uidict['a'])
+		click(uidict['e'])
+	TurnDone = False
+	while TurnDone != True:
+		try:
+			loc = pyautogui.locateOnScreen("endturnscreen.PNG", confidence=0.97)
+			if loc != None:
+				pyautogui.click(loc)
+				time.sleep(2)
+				pyautogui.click((1600,200))
+				TurnDone = True
+		except:
+			pass
 	return "PAS"
 
 def reroll():
 	click(uidict['r'])
 	return createSAU()
 
-#messages of type FRE come in "FRE shopLoc"
-def freeze(message):
-	freezeunfreeze(message)
-	return "PAS"
 
 def sendMessage(message):
     Server.send(message.encode("utf-8"))
@@ -341,18 +338,13 @@ def receivemessage(message):
 		sendMessage(createSFU())
 	if message[0:3] == "RER": #Reroll
 		sendMessage(reroll())
-	if message[0:3] == "FRE":
-		messageinfo = message.split()
-		sendMessage(freeze(messageinfo[1]))
 	if message[0:3] == "BUY":
 		messageinfo = message.split()
 		sendMessage(buy(messageinfo[:][1:3]))
 	if message[0:3] == "END":
-		sendMessage(endturn())
+		sendMessage(endTurn())
 
 
-
-sendMessage("connected you are the server")
 
 while True:
 	receivemessage(Server.recv(1024).decode("utf-8"))
