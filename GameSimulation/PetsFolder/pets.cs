@@ -9,6 +9,21 @@ namespace GameSimulation
 {
     public abstract class Pets
     {
+        protected int Level()
+        {
+            switch (Xp)
+            {
+                case 5:
+                    return 3;
+                case 4:
+                case 3:
+                case 2:
+                    return 2;
+                default:
+                    return 1;
+            }
+        }
+
         public virtual void XpUp(Environment env, int pos)
         {
             Hp++;

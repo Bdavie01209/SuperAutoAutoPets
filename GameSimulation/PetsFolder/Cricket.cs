@@ -40,6 +40,17 @@ namespace GameSimulation.PetsFolder
                     team[pos] = new ZombieCricket(0,0);
                     break;
             }
+            if (this.equip == equipment.honey)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (team[i] == null)
+                    {
+                        team[i] = new ZombieCricket(0, 0);
+                        break;
+                    }
+                }
+            }
         }
 
         public override Pets clone()

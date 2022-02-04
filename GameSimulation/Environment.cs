@@ -166,8 +166,7 @@ namespace GameSimulation
                         }
                     }
                 }
-            }
-            
+            }    
         }
 
         public double Turnend()
@@ -181,7 +180,7 @@ namespace GameSimulation
             }
             if (randTeam)
             {
-                TeamFight(null, render);
+                TeamFight(null);
             }
             return 0.0;
         }
@@ -194,11 +193,11 @@ namespace GameSimulation
             }
             if (posShop > 4)//food shop related purchase
             {
-                if(foodshop[postoBuy - 4] == null)
+                if(foodshop[posShop - 5] == null)
                 {
                     return -1.0;
                 }
-                if (foodshop[postoBuy - 4].Name != foodNames.SaladBowl || foodshop[postoBuy - 4].Name != foodNames.Sushi || foodshop[postoBuy - 4].Name != foodNames.Pizza)
+                if (foodshop[posShop - 5].Name != foodNames.SaladBowl || foodshop[posShop - 5].Name != foodNames.Sushi || foodshop[posShop - 5].Name != foodNames.Pizza)
                 {
                     if (Team[postoBuy] == null)
                     {
@@ -217,8 +216,8 @@ namespace GameSimulation
                 else
                 {
                     gold -= 3;
-                    foodshop[postoBuy - 4].OnConsume(null, this); //this should only be active ith aoe buffs
-                    foodshop[postoBuy - 4] = null;
+                    foodshop[posShop - 5].OnConsume(null, this); //this should only be active with aoe buffs
+                    foodshop[posShop - 5] = null;
                     return 1.0;
                 }
 
@@ -318,7 +317,7 @@ namespace GameSimulation
 
         }
 
-        public double TeamFight(Pets[] EnemyTeam, bool Render)
+        public double TeamFight(Pets[] EnemyTeam)
         {
             if (EnemyTeam == null)
             {
@@ -358,7 +357,7 @@ namespace GameSimulation
                     break;
                 }
                 attack(teamcopy, EnemyTeam);
-                if (Render)
+                if (render)
                 {
                     renderTeam(teamcopy);
                     renderTeam(EnemyTeam);
@@ -452,6 +451,10 @@ namespace GameSimulation
         {
             switch (i)
             {
+                case 8:
+                    return new Pig(cans, cans);
+                case 7:
+                    return new Otter(cans, cans);
                 case 6:
                     return new Mosquito(cans, cans);
                 case 5:
@@ -515,6 +518,7 @@ namespace GameSimulation
                 }
             }
             environmentArray[2, 3, 0] = Turn;
+            environmentArray[2,2,0] = Lives;
             environmentArray[2, 4, 0] = gold;
 
             /* in the case of an all ant team with an all horse shop and 1 apple on turn 4 with 10 gold it should look like

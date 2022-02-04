@@ -33,7 +33,6 @@ namespace GameSimulation
             sendData = Encoding.UTF8.GetBytes(message);
             stream = client.GetStream();
             stream.Write(sendData,0,sendData.Length);
-            Console.WriteLine("C# Sent To python");
         }
         public string ReceiveMessage()
         {
@@ -49,6 +48,32 @@ namespace GameSimulation
 
         }
 
-
+        public void Send355Array(int[,,] Array)
+        {
+            string Message = "";
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 5; y++)
+                {
+                    for (int z = 0; z < 5; z++)
+                    {
+                        Message = Message + Array[x, y, z];
+                        if (z != 4)
+                        {
+                            Message += " ";
+                        }
+                    }
+                    if (y != 4)
+                    {
+                        Message += ".";
+                    }
+                }
+                if (x != 2)
+                {
+                    Message += "|";
+                }
+            }
+            sendMessage(Message);
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 using GameSimulation.PetsFolder;
 using System.IO;
 using System.IO.Pipes;
-
+using GameSimulation.FoodFolder;
 
 namespace GameSimulation
 {
@@ -14,61 +14,32 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            /*
             Environment env = new Environment(true, false,true);
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            env.Buy(0, 0);
-            env.Buy(1, 1);
-            env.Buy(2, 2);
-            env.Buy(3, 3);
-            env.Buy(4, 4);
 
+            env.Team[0] = new Ant(0,0);
+            env.Team[1] = new Pig(0,0);
+            env.Team[2] = new Ant(0,0);
+            env.Team[3] = new Ant(0,0);
+            env.Team[4] = new Ant(0,0);
+            
+            env.Petshop[0] = new horse(0, 0);
+            env.Petshop[1] = new horse(0, 0);
+            env.Petshop[2] = new horse(0, 0);
+            env.Petshop[3] = new horse(0, 0);
+            env.Petshop[4] = new horse(0, 0);
 
-            Pets[] example = new Pets[5];
-            example[1] = new horse(0, 0);
-            example[2] = new horse(0, 0);
-            example[3] = new horse(0, 0);
+            env.foodshop[1] = new Apple();
 
-            Console.WriteLine("fight");
-
-            if (env.TeamFight(example, false) == 1.0)
-            {
-                Console.WriteLine("Win");
-            }
-            else
-            {
-                Console.WriteLine("Draw");
-            }
-            int[,,] array = env.environmenttodata();
-
-            watch.Stop();
-
-            Console.WriteLine(watch.ElapsedMilliseconds + " miliseconds");
-
-            env.renderTeam(env.Team);
-
-
-            env.Reset();
-            */
             Console.ReadKey();
+
+            //Below is the server 
+
             Server Sock = new Server(1025, "127.0.0.1");
-            bool echo = false;
 
 
             while (true)
             {
-                Thread.Sleep(100);
-                string Message = Console.ReadLine();
-                if (Message == "echo")
-                {
-                    echo = !echo;
-                }
-                Sock.sendMessage(Message);
-                if (echo)
-                {
-                    Console.WriteLine(Sock.ReceiveMessage());
-                }
+                
             }
             
         }
