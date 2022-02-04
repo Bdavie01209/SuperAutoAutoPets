@@ -25,7 +25,7 @@ namespace GameSimulation
             Console.WriteLine("connection made...");
         }
 
-        public void sendMessage(string message)
+        public void SendMessage(string message)
         {
             bytecount = Encoding.UTF8.GetByteCount(message);
             sendData = new byte[bytecount];
@@ -72,7 +72,7 @@ namespace GameSimulation
                     Message += "|";
                 }
             }
-            sendMessage(Message);
+            SendMessage(Message);
         }
     }
 }

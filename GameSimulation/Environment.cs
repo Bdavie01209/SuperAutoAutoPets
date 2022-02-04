@@ -23,7 +23,7 @@ namespace GameSimulation
         bool randTeam;
         bool prevTeamModel;
         public bool render;
-        public Random rn;
+        private Random rn;
 
         private Pets[] prevTeam;
 
@@ -63,7 +63,7 @@ namespace GameSimulation
             {
                 if (Team[i] != null)
                 {
-                    returnValue[i] = Team[i].clone();
+                    returnValue[i] = Team[i].Clone();
                 }
             }
             return returnValue;
@@ -90,7 +90,7 @@ namespace GameSimulation
             {
                 if (Team[i] != null)
                 {
-                    Team[i].onTurnStart(this, i);
+                    Team[i].OnTurnStart(this, i);
                 }
             }
             prevTeam = copyTeam();
@@ -172,92 +172,96 @@ namespace GameSimulation
 
         public double Turnend()
         {
+            double WinLossDraw;
             for (int i = 0; i < 5; i++)
             {
                 if (Team[i] != null)
                 {
-                    Team[i].onTurnEnd(this);
+                    Team[i].OnTurnEnd(this);
                 }
             }
             if (randTeam)
             {
-                TeamFight(null);
+                WinLossDraw = TeamFight(null);
+            }
+            else
+            {
+                WinLossDraw = TeamFight(prevTeam);
             }
             Turnstart();
-            return 0.0;
+            return WinLossDraw;
         }
 
-        public double Buy(int posShop, int postoBuy)
+        public int Buy(int posShop, int postoBuy)
         {
             if (gold < 3)//no gold
             {
-                return -1.0;
+                return -2;
             }
             if (posShop > 4)//food shop related purchase
             {
-                if(foodshop[posShop - 5] == null)
+                if(foodshop[posShop - 5] == null) //shop item doesn't exist
                 {
-                    return -1.0;
+                    return -1;
                 }
-                if (foodshop[posShop - 5].Name != foodNames.SaladBowl || foodshop[posShop - 5].Name != foodNames.Sushi || foodshop[posShop - 5].Name != foodNames.Pizza)
+                if (foodshop[posShop - 5].Name != foodNames.SaladBowl || foodshop[posShop - 5].Name != foodNames.Sushi || foodshop[posShop - 5].Name != foodNames.Pizza || foodshop[posShop -5].Name != foodNames.CannedFood) //all aoe foods don't need target
                 {
                     if (Team[postoBuy] == null)
                     {
-                        return -1.0;
+                        return -1; //no one in that spot pass
                     }
                     else
                     {
                         gold -= 3;
-                        Team[postoBuy].onSelfEat(this, postoBuy);
+                        Team[postoBuy].OnSelfEat(this, postoBuy);
                         foodshop[posShop - 5].OnConsume(Team[postoBuy],this);
                         foodshop[posShop - 5] = null;
 
-                        return 1.0;
+                        return 1;
                     }
                 }
-                else
+                else//this is the aoe section and as such doesn't require a null check on pets
                 {
                     gold -= 3;
                     foodshop[posShop - 5].OnConsume(null, this); //this should only be active with aoe buffs
                     foodshop[posShop - 5] = null;
-                    return 1.0;
+                    return 1;
                 }
 
-            } 
-            if (Team[postoBuy] != null)//animl related purchase
-            {
-                if (Petshop[posShop] == null)
-                {
-                    return -1.0;
-                }
-                if (Team[postoBuy].Name != Petshop[posShop].Name)
-                {
-                    Team[postoBuy].onSelfSold(this, postoBuy);
-                    gold -= 3;
-                    Petshop[posShop].onBought(this, postoBuy);
-                    Petshop[posShop] = null;
-                    return 1.0;
-                }
-                if (Team[postoBuy].Xp >= 5)
-                {
-                    return -1.0;
-                }
-                gold -= 3;
-                Petshop[posShop].onBought(this, postoBuy);
-                Petshop[posShop] = null;
-                return 1.0;
-
-            } 
+            }
             else
             {
                 if (Petshop[posShop] == null)
                 {
-                    return -1.0;
+                    return -1; //no pet in pet shop means return -1
                 }
-                gold -= 3;
-                Petshop[posShop].onBought(this, postoBuy);
+            }
+            if (Team[postoBuy] != null)//animal related purchase
+            {
+                if (Team[postoBuy].Name != Petshop[posShop].Name) //if names aren't equal ie trying to buy ant on horse
+                {
+                    Team[postoBuy].OnSelfSold(this, postoBuy); //sell the current animal horse
+                    gold -= 3; //remove 3 gold
+                    Petshop[posShop].OnBought(this, postoBuy); //buy the shop animal ant
+                    Petshop[posShop] = null; //set the petshop to null
+                    return 1; //return successfull
+                }
+                if (Team[postoBuy].Xp >= 5) //if the animal is not null and not the same it must be getting xp therefore check the xp of the animal
+                {
+                    return -1; //if it is already level 5 return -1;
+                }
+                gold -= 3; 
+                Petshop[posShop].OnBought(this, postoBuy); //buy the animal
                 Petshop[posShop] = null;
-                return 1.0;
+                return 1;
+
+            } 
+            else //the team spot is null already
+            {
+                gold -= 3;
+                Petshop[posShop].OnBought(this, postoBuy); //buy the animal
+                Petshop[posShop] = null; //set the shop to null
+                return 1;
             }
         }
 
@@ -337,11 +341,11 @@ namespace GameSimulation
             {
                 if (teamcopy[i] != null)
                 {
-                    teamcopy[i].onBattleStart(teamcopy,EnemyTeam);
+                    teamcopy[i].OnBattleStart(teamcopy,EnemyTeam);
                 }
                 if (EnemyTeam[i] != null)
                 {
-                    EnemyTeam[i].onBattleStart(EnemyTeam, teamcopy);
+                    EnemyTeam[i].OnBattleStart(EnemyTeam, teamcopy);
                 }
             }
             while (teamexist && enemyexist)
@@ -456,47 +460,22 @@ namespace GameSimulation
 
         private void attack(Pets[] teamPets, Pets[] enemypets)
         {
-            teamPets[4].onAttack(teamPets, enemypets);
-            enemypets[4].onAttack(enemypets, teamPets);
+            teamPets[4].OnAttack(teamPets, enemypets);
+            enemypets[4].OnAttack(enemypets, teamPets);
             int damageE = teamPets[4].Attack;
 
-            teamPets[4].onDamage(enemypets[4].Attack, teamPets, enemypets, 4);
-            enemypets[4].onDamage(damageE, enemypets, teamPets, 4);
+            teamPets[4].OnDamage(enemypets[4].Attack, teamPets, enemypets, 4);
+            enemypets[4].OnDamage(damageE, enemypets, teamPets, 4);
         }
 
         public Pets RandomPet(int i)
         {
-            switch (i)
-            {
-                case 8:
-                    return new Pig(cans, cans);
-                case 7:
-                    return new Otter(cans, cans);
-                case 6:
-                    return new Mosquito(cans, cans);
-                case 5:
-                    return new horse(cans, cans);
-                case 4:
-                    return new Fish(cans, cans);
-                case 3:
-                    return new Duck(Cans, Cans);
-                case 2:
-                    return new Cricket(Cans, Cans);
-                case 1:
-                    return new Beaver(Cans, Cans);
-                default:
-                    return new Ant(Cans, Cans);
-            }
-
+            return Pets.PetsGen(i, Cans, Cans);
         }
 
         public Food RandomFood(int i)
         {
-            switch (i)
-            {
-                default:
-                    return new Apple();
-            }
+            return Food.FoodGen(i);
 
         }
 
@@ -512,7 +491,7 @@ namespace GameSimulation
             {
                 if (Team[i] != null)
                 {
-                    int[] petVals = Team[i].petValues();
+                    int[] petVals = Team[i].PetValues();
                     for(int x = 0; x < 5; x++)
                     {
                         environmentArray[0, i, x] = petVals[x];
@@ -520,7 +499,7 @@ namespace GameSimulation
                 }
                 if (Petshop[i] != null)
                 {
-                    int[] petVals = Petshop[i].petValues();
+                    int[] petVals = Petshop[i].PetValues();
                     for (int x = 0; x < 5; x++)
                     {
                         environmentArray[1, i, x] = petVals[x];
@@ -542,9 +521,9 @@ namespace GameSimulation
             /* in the case of an all ant team with an all horse shop and 1 apple on turn 4 with 10 gold
              * with 3 wins and 2 lives
              * 
-             * 1,1,1,1,1    1,1,1,1,1   2,2,2,2,2
-             * 6,6,6,6,6  x 1,1,1,1,1 x 2,2,2,2,2
-             * 0,1,2,4,10   0,0,3,0,0   0,0,0,0,0
+             * 1,1,1,1,1    1,1,1,1,1   2,2,2,2,2  0,0,0,0,0  0,0,0,0,0
+             * 6,6,6,6,6  x 1,1,1,1,1 x 2,2,2,2,2 x0,0,0,0,0 x0,0,0,0,0
+             * 0,1,2,4,10   0,0,3,0,0   0,0,0,0,0  0,0,0,0,0  0,0,0,0,0
              * 
              * 
              */
@@ -578,10 +557,19 @@ namespace GameSimulation
             else
             {
                 string[] m = Message.Split(" ");
-                if(Buy(int.Parse(m[0]), int.Parse(m[1])) == -1.0)
+                switch(Buy(int.Parse(m[0]), int.Parse(m[1])))
                 {
-                    this.Pass();
+                    case -1: //something stopped this from being valid but 
+                        this.Pass();
+                        break;
+                    case -2:
+                        this.Turnend();
+                        break;
                 }
+                
+                    
+                
+
             }
 
 

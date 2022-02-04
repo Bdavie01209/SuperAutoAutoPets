@@ -55,6 +55,7 @@ def receive355array(Message):
                 inputArray[x,y,z] = int(MessageArrayZ[z])
 
 
+
 class AutoPetsEnv(py_environment.PyEnvironment):
     def __init__(self):
         self._action_spec = array_spec.BoundedArraySpec(
@@ -257,7 +258,7 @@ class AutoPetsEnv(py_environment.PyEnvironment):
 
 
 environment = AutoPetsEnv()
-utils.validate_py_environment(environment, episodes=5)
+utils.validate_py_environment(environment, episodes=50)
 
 environment._reset()
 

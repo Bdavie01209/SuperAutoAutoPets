@@ -16,15 +16,5 @@ namespace GameSimulation.PetsFolder
         }
 
 
-        public override Pets clone()
-        {
-            horse returnValue = new horse(0, 0);
-            returnValue.Attack = this.Attack;
-            returnValue.Hp = this.Hp;
-            returnValue.equip = this.equip;
-            returnValue.Xp = this.Xp;
-            return returnValue;
-        }
-
     }
 }

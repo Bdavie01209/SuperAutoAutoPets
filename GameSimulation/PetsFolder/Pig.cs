@@ -16,7 +16,7 @@ namespace GameSimulation.PetsFolder
             this.Attack = 3 + att;
         }
 
-        public override void onSelfSold(Environment env, int pos)
+        public override void OnSelfSold(Environment env, int pos)
         {
             env.Team[pos] = null;
             if (Xp == 5)
@@ -33,14 +33,5 @@ namespace GameSimulation.PetsFolder
             }
         }
 
-
-        public override Pets clone()
-        {
-            Pig pet = new Pig(0, 0);
-            pet.Attack = this.Attack;
-            pet.Hp = this.Hp;
-            pet.equip = this.equip;
-            return pet;
-        }
     }
 }

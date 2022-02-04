@@ -16,7 +16,7 @@ namespace GameSimulation.PetsFolder
             this.Attack = 1 + att;
         }
 
-        public override void onBought(Environment env, int pos)
+        public override void OnBought(Environment env, int pos)
         {
             if (env.Team[pos] != null)
             {
@@ -58,13 +58,6 @@ namespace GameSimulation.PetsFolder
         }
 
 
-        public override Pets clone()
-        {
-            Otter pet = new Otter(0,0);
-            pet.Attack = this.Attack;
-            pet.Hp = this.Hp;
-            pet.equip = this.equip;
-            return pet;
-        }
+        
     }
 }

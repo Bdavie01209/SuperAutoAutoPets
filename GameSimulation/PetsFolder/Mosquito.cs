@@ -18,7 +18,7 @@ namespace GameSimulation.PetsFolder
             this.Attack = 2 + at;
         }
 
-        public override void onBattleStart(Pets[] team, Pets[] enemy)
+        public override void OnBattleStart(Pets[] team, Pets[] enemy)
         {
             int shots = 1;
 
@@ -55,7 +55,7 @@ namespace GameSimulation.PetsFolder
                 {
                     if (hitloc != PostionsHit[0] && hitloc != PostionsHit[1] && hitloc != PostionsHit[2])
                     {
-                        enemy[hitloc].onDamage(1, enemy, team, hitloc);
+                        enemy[hitloc].OnDamage(1, enemy, team, hitloc);
                         shots -= 1;
                     }
                 }
@@ -67,15 +67,6 @@ namespace GameSimulation.PetsFolder
         }
 
 
-        public override Pets clone()
-        {
-            Mosquito returnValue = new Mosquito(0, 0);
-            returnValue.Attack = this.Attack;
-            returnValue.Hp = this.Hp;
-            returnValue.equip = this.equip;
-            returnValue.Xp = this.Xp;
-            return returnValue;
-        }
 
     }
 }

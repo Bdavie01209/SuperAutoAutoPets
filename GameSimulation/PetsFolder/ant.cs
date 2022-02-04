@@ -9,12 +9,6 @@ namespace GameSimulation.PetsFolder
 {
     public class Ant : Pets
     {
-        public override int Xp { get => xp; set => xp = value; }
-        private int xp;
-        public override int Hp { get => hp; set => hp = value; }
-        private int hp;
-        public override int Attack { get => attack; set => attack = value; }
-        private int attack;
         public override PetsNames Name { get => PetsNames.Ant; }
 
         public Ant(int ExtraHp, int ExtraAtt)
@@ -24,7 +18,7 @@ namespace GameSimulation.PetsFolder
             Xp = 0;
         }
 
-        public override void onfaint(Pets[] team, Pets[] enemy, int pos)
+        public override void Onfaint(Pets[] team, Pets[] enemy, int pos)
         {
             team[pos] = null;
             bool flag = false;
@@ -62,16 +56,6 @@ namespace GameSimulation.PetsFolder
                     team[x].Hp += 1;
                     break;
             }
-        }
-
-        public override Pets clone()
-        {
-            Ant returnValue = new Ant(0, 0);
-            returnValue.Attack = this.Attack;
-            returnValue.Hp = this.Hp;
-            returnValue.equip = this.equip;
-            returnValue.Xp = this.xp;
-            return returnValue;
         }
     }
 }
