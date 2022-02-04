@@ -13,7 +13,6 @@ namespace GameSimulation
 {
     public class Server
     {
-        string message;
         int bytecount;
         NetworkStream stream;
         byte[] sendData;

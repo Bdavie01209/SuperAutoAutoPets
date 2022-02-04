@@ -62,13 +62,6 @@ namespace GameSimulation.PetsFolder
                     team[x].Hp += 1;
                     break;
             }
-
-
-            for (int i = pos; i > 0; i--)
-            {
-
-                team[i] = team[i - 1];
-            }
         }
 
         public override Pets clone()

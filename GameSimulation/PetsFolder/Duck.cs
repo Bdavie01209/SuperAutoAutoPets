@@ -28,25 +28,34 @@ namespace GameSimulation.PetsFolder
             env.Team[pos] = null;
             if (Xp == 5)
             {
-                foreach (Pets p in env.Petshop)
+                for (int x = 0; x < 5; x++)
                 {
-                    p.Hp += 3;
+                    if (env.Petshop[x] != null)
+                    {
+                        env.Petshop[x].Hp += 3;
+                    }
                 }
                 env.gold += 3;
             }
             else if (Xp > 2)
             {
-                foreach (Pets p in env.Petshop)
+                for (int x = 0; x < 5; x++)
                 {
-                    p.Hp += 2;
+                    if (env.Petshop[x] != null)
+                    {
+                        env.Petshop[x].Hp += 2;
+                    }
                 }
                 env.gold += 2;
             }
             else
             {
-                foreach (Pets p in env.Petshop)
+                for (int x = 0; x < 5; x++)
                 {
-                    p.Hp += 1;
+                    if (env.Petshop[x] != null)
+                    {
+                        env.Petshop[x].Hp += 1;
+                    }
                 }
                 env.gold += 1;
             }

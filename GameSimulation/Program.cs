@@ -14,21 +14,10 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            Environment env = new Environment(true, false,true);
-
-            env.Team[0] = new Ant(0,0);
-            env.Team[1] = new Pig(0,0);
-            env.Team[2] = new Ant(0,0);
-            env.Team[3] = new Ant(0,0);
-            env.Team[4] = new Ant(0,0);
-            
-            env.Petshop[0] = new horse(0, 0);
-            env.Petshop[1] = new horse(0, 0);
-            env.Petshop[2] = new horse(0, 0);
-            env.Petshop[3] = new horse(0, 0);
-            env.Petshop[4] = new horse(0, 0);
-
-            env.foodshop[1] = new Apple();
+            bool selfControl = true;
+            bool render = true;
+            bool RandTeams = true;
+            Environment env = new Environment(selfControl, render, RandTeams);
 
             Console.ReadKey();
 
@@ -36,9 +25,19 @@ namespace GameSimulation
 
             Server Sock = new Server(1025, "127.0.0.1");
 
+            bool training = true;
 
-            while (true)
+            while (training)
             {
+                var m = Sock.ReceiveMessage();
+                if (m == "REN")
+                {
+                    env.render = true;
+                }
+                else
+                {
+                    Sock.Send355Array(env.processMessage(m));
+                }
                 
             }
             

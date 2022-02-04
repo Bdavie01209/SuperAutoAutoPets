@@ -22,12 +22,12 @@ namespace GameSimulation
         bool selfcontrol;
         bool randTeam;
         bool prevTeamModel;
-        bool render;
+        public bool render;
         public Random rn;
 
         private Pets[] prevTeam;
 
-        public Environment(bool SC, bool Render, bool method)
+        public Environment(bool SC, bool Render, bool randTeams)
         {
             Team = new Pets[5];
             Petshop = new Pets[5];
@@ -41,7 +41,7 @@ namespace GameSimulation
             rn = new Random();
             render = Render;
 
-            if (!method)
+            if (!randTeams)
             {
                 prevTeamModel = true;
                 randTeam = false;
@@ -78,6 +78,7 @@ namespace GameSimulation
             gold = 10;
             Cans = 0;
             Lives = 10;
+            Turnstart();
         }
 
         public void Turnstart()
@@ -182,6 +183,7 @@ namespace GameSimulation
             {
                 TeamFight(null);
             }
+            Turnstart();
             return 0.0;
         }
 
@@ -207,8 +209,8 @@ namespace GameSimulation
                     {
                         gold -= 3;
                         Team[postoBuy].onSelfEat(this, postoBuy);
-                        foodshop[posShop - 4].OnConsume(Team[postoBuy],this);
-                        foodshop[posShop - 4] = null;
+                        foodshop[posShop - 5].OnConsume(Team[postoBuy],this);
+                        foodshop[posShop - 5] = null;
 
                         return 1.0;
                     }
@@ -224,9 +226,17 @@ namespace GameSimulation
             } 
             if (Team[postoBuy] != null)//animl related purchase
             {
-                if (Team[postoBuy].Name != Petshop[posShop].Name)
+                if (Petshop[posShop] == null)
                 {
                     return -1.0;
+                }
+                if (Team[postoBuy].Name != Petshop[posShop].Name)
+                {
+                    Team[postoBuy].onSelfSold(this, postoBuy);
+                    gold -= 3;
+                    Petshop[posShop].onBought(this, postoBuy);
+                    Petshop[posShop] = null;
+                    return 1.0;
                 }
                 if (Team[postoBuy].Xp >= 5)
                 {
@@ -240,6 +250,10 @@ namespace GameSimulation
             } 
             else
             {
+                if (Petshop[posShop] == null)
+                {
+                    return -1.0;
+                }
                 gold -= 3;
                 Petshop[posShop].onBought(this, postoBuy);
                 Petshop[posShop] = null;
@@ -247,16 +261,6 @@ namespace GameSimulation
             }
         }
 
-        public double BuyReplace(int posShop, int posToBuy)
-        {
-            if (Team[posToBuy] != null)
-            {
-                Team[posToBuy].onSelfSold(this, posToBuy);
-            }
-
-            return Buy(posShop, posToBuy);
-
-        }
 
         public void renderTeam(Pets[] Te)
         {
@@ -371,10 +375,23 @@ namespace GameSimulation
             }
             if (!teamexist)
             {
+                if (Turn >= 5)
+                {
+                    Lives -= 3;
+                }
+                else if (Turn >= 3)
+                {
+                    Lives -= 2;
+                }
+                else
+                {
+                    Lives -= 1;
+                }
                 return -1.0; //loss
             }
             else
             {
+                wins += 1;
                 return 1.0; // win
             }
         }
@@ -520,17 +537,57 @@ namespace GameSimulation
             environmentArray[2, 3, 0] = Turn;
             environmentArray[2,2,0] = Lives;
             environmentArray[2, 4, 0] = gold;
+            environmentArray[2, 2, 1] = wins;
 
-            /* in the case of an all ant team with an all horse shop and 1 apple on turn 4 with 10 gold it should look like
+            /* in the case of an all ant team with an all horse shop and 1 apple on turn 4 with 10 gold
+             * with 3 wins and 2 lives
              * 
              * 1,1,1,1,1    1,1,1,1,1   2,2,2,2,2
              * 6,6,6,6,6  x 1,1,1,1,1 x 2,2,2,2,2
-             * 0,1,0,4,10   0,0,0,0,0   0,0,0,0,0
+             * 0,1,2,4,10   0,0,3,0,0   0,0,0,0,0
              * 
              * 
              */
             return environmentArray;
         }
+
+
+        private void Pass()
+        {
+            if (gold <= 3)
+            {
+                this.Turnend();
+            }
+            else
+            {
+                this.Reroll();
+            }
+        }
+
+        public int[,,] processMessage(string Message)
+        {
+            if(Message == "PAS")
+            {
+                this.Pass();
+            }
+            else if (Message == "RESTART") 
+            {
+                this.Reset();
+            }
+            //It should be in form "int int"
+            else
+            {
+                string[] m = Message.Split(" ");
+                if(Buy(int.Parse(m[0]), int.Parse(m[1])) == -1.0)
+                {
+                    this.Pass();
+                }
+            }
+
+
+            return environmenttodata();
+        }
+
 
     }
 }
