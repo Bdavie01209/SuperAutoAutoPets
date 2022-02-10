@@ -56,6 +56,7 @@ namespace GameSimulation.PetsFolder
                     team[x].Hp += 1;
                     break;
             }
+            base.Onfaint(team, enemy, pos);
         }
     }
 }

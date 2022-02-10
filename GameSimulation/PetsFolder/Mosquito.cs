@@ -18,7 +18,7 @@ namespace GameSimulation.PetsFolder
             this.Attack = 2 + at;
         }
 
-        public override void OnBattleStart(Pets[] team, Pets[] enemy)
+        public override void OnBattleStart(Pets[] team, Pets[] enemy, int pos)
         {
             int shots = 1;
 

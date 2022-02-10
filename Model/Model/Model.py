@@ -9,6 +9,9 @@ import tensorflow as tf
 import numpy as np
 import random as rn
 
+
+from tf_agents.agents.reinforce import reinforce_agent
+from tf_agents.drivers import py_driver
 from tf_agents.environments import py_environment
 from tf_agents.environments import tf_environment
 from tf_agents.environments import tf_py_environment
@@ -61,7 +64,7 @@ class AutoPetsEnv(py_environment.PyEnvironment):
         self._action_spec = array_spec.BoundedArraySpec(
             shape=(), dtype=np.int32, minimum=0, maximum=35, name='action')
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=inputArray.shape, dtype=np.int32, minimum=-2, name='observation')
+            shape=inputArray.shape, dtype=np.int32, minimum=-2,maximum= 400, name='observation')
         self._state = inputArray
         self._episode_ended = False
 
@@ -70,6 +73,16 @@ class AutoPetsEnv(py_environment.PyEnvironment):
     
     def observation_spec(self):
         return self._observation_spec
+
+    def rewardCalc(self):
+        avgTeam = 0.0
+        for y in range(5):
+            for z in range(1,3):
+                avgTeam += self._state[0,y,z]
+        avgTeam = avgTeam/10.0
+        #current turn + average team attack/hp + wins * 2
+        reward = self._state[2,3,0] + avgTeam + (self._state[2,2,1] * 2)
+        return reward
     
     def _reset(self):
         self._state = np.zeros((3,5,5))
@@ -245,35 +258,37 @@ class AutoPetsEnv(py_environment.PyEnvironment):
         #if lives <= 0 or wins >= 10
         if self._state[2,2,0] <= 0 or self._state[2,2,1] >= 10:
             self._episode_ended = True;
-            avgTeam = 0.0
-            for y in range(5):
-                for z in range(1,3):
-                    avgTeam += self._state[0,y,z]
-            avgTeam = avgTeam/10.0
-            #current turn + average team attack/hp + wins * 2
-            reward = self._state[2,3,0] + avgTeam + (self._state[2,2,1] * 2)
-            return ts.termination(self._state, reward)
+            return ts.termination(self._state, self.rewardCalc())
         else:
             return ts.transition(self._state, reward=0.0, discount=1.0)
 
 
+
+num_iterations = 250 # @param {type:"integer"}
+collect_episodes_per_iteration = 2 # @param {type:"integer"}
+replay_buffer_capacity = 2000 # @param {type:"integer"}
+
+fc_layer_params = (100,)
+
+learning_rate = 1e-3 # @param {type:"number"}
+log_interval = 25 # @param {type:"integer"}
+num_eval_episodes = 10 # @param {type:"integer"}
+eval_interval = 50 # @param {type:"integer"}
+
 environment = AutoPetsEnv()
 utils.validate_py_environment(environment, episodes=50)
 
-environment._reset()
+print('Observation Spec:')
+print(environment.time_step_spec().observation)
+print('Action Spec:')
+print(environment.action_spec())
 
-cumulative_reward = 0
+actor_net = actor_distribution_network.ActorDistributionNetwork(
+    train_env.observation_spec(),
+    train_env.action_spec(),
+    fc_layer_params=fc_layer_params)
 
-while(not environment._episode_ended):
-  time_step = environment.step(rn.randint(0,35))
-  print(time_step)
-  print(inputArray[2,2,0])
-  print(inputArray[2,2,1])
-  cumulative_reward += time_step.reward
 
-print(time_step)
-cumulative_reward += time_step.reward
-print('Final Reward = ', cumulative_reward)
 
 while True:
     print("fell Through")

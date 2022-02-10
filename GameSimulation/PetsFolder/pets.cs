@@ -13,6 +13,9 @@ namespace GameSimulation
         {
             return petNumber switch
             {
+                10 => new Dodo(ExtraHp, ExtraAttack),
+                9 => new Crab(ExtraHp,ExtraAttack),
+
                 8 => new Pig(ExtraHp, ExtraAttack),
                 7 => new Otter(ExtraHp, ExtraAttack),
                 6 => new Mosquito(ExtraHp, ExtraAttack),
@@ -127,7 +130,7 @@ namespace GameSimulation
         {
             //base case do nothing
         }
-        public virtual void OnBattleStart(Pets[] team, Pets[] enemy)
+        public virtual void OnBattleStart(Pets[] team, Pets[] enemy, int pos)
         {
             //base case do nothing
         }

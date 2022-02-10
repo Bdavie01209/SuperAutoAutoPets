@@ -78,6 +78,7 @@ namespace GameSimulation
             gold = 10;
             Cans = 0;
             Lives = 10;
+            wins = 0;
             Turnstart();
         }
 
@@ -341,11 +342,11 @@ namespace GameSimulation
             {
                 if (teamcopy[i] != null)
                 {
-                    teamcopy[i].OnBattleStart(teamcopy,EnemyTeam);
+                    teamcopy[i].OnBattleStart(teamcopy,EnemyTeam,i);
                 }
                 if (EnemyTeam[i] != null)
                 {
-                    EnemyTeam[i].OnBattleStart(EnemyTeam, teamcopy);
+                    EnemyTeam[i].OnBattleStart(EnemyTeam, teamcopy,i);
                 }
             }
             while (teamexist && enemyexist)
@@ -518,10 +519,11 @@ namespace GameSimulation
             environmentArray[2, 4, 0] = gold;
             environmentArray[2, 2, 1] = wins;
 
-            /* in the case of an all ant team with an all horse shop and 1 apple on turn 4 with 10 gold
+            /* in the case of an all ant team with honeys and 4 xp (so +4/+4) 
+             * and an all horse shop and 1 apple on turn 4 with 10 gold
              * with 3 wins and 2 lives
-             * 
-             * 1,1,1,1,1    1,1,1,1,1   2,2,2,2,2  0,0,0,0,0  0,0,0,0,0
+             *  
+             * 1,1,1,1,1    5,5,5,5,5   6,6,6,6,6  1,1,1,1,1  4,4,4,4,4
              * 6,6,6,6,6  x 1,1,1,1,1 x 2,2,2,2,2 x0,0,0,0,0 x0,0,0,0,0
              * 0,1,2,4,10   0,0,3,0,0   0,0,0,0,0  0,0,0,0,0  0,0,0,0,0
              * 
