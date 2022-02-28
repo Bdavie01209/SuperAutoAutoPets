@@ -37,7 +37,7 @@ namespace GameSimulation
         {
             stream = client.GetStream();
             var buffer = new byte[1024];
-            int numBytesRead = stream.Read(buffer, 0, buffer.Length);
+                int numBytesRead = stream.Read(buffer, 0, buffer.Length);
             if (numBytesRead > 0)
             {
                 return Encoding.UTF8.GetString(buffer, 0, numBytesRead);

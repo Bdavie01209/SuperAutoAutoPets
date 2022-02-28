@@ -8,8 +8,6 @@ import abc
 import tensorflow as tf
 import numpy as np
 import random as rn
-
-
 from tf_agents.agents.reinforce import reinforce_agent
 from tf_agents.drivers import py_driver
 from tf_agents.environments import py_environment
@@ -20,6 +18,14 @@ from tf_agents.specs import array_spec
 from tf_agents.environments import wrappers
 from tf_agents.environments import suite_gym
 from tf_agents.trajectories import time_step as ts
+from rl.agents import DQNAgent
+from rl.policy import BoltzmannQPolicy
+from rl.memory import SequentialMemory
+from tensorflow import keras
+from keras.layers import Dense, Activation
+from keras.models import Sequential, load_model
+from tensorflow.keras.optimizers import Adam 
+
 
 host = "127.0.0.1"
 port = 1025
@@ -260,38 +266,190 @@ class AutoPetsEnv(py_environment.PyEnvironment):
             self._episode_ended = True;
             return ts.termination(self._state, self.rewardCalc())
         else:
-            return ts.transition(self._state, reward=0.0, discount=1.0)
+            if(self.rewardCalc() > 20):
+                partial = 1
+            else:
+                partial = 0
+            return ts.transition(self._state, reward=partial, discount=1.0)
 
 
 
-num_iterations = 250 # @param {type:"integer"}
-collect_episodes_per_iteration = 2 # @param {type:"integer"}
-replay_buffer_capacity = 2000 # @param {type:"integer"}
-
-fc_layer_params = (100,)
-
-learning_rate = 1e-3 # @param {type:"number"}
-log_interval = 25 # @param {type:"integer"}
-num_eval_episodes = 10 # @param {type:"integer"}
-eval_interval = 50 # @param {type:"integer"}
-
-environment = AutoPetsEnv()
-utils.validate_py_environment(environment, episodes=50)
-
-print('Observation Spec:')
-print(environment.time_step_spec().observation)
-print('Action Spec:')
-print(environment.action_spec())
-
-actor_net = actor_distribution_network.ActorDistributionNetwork(
-    train_env.observation_spec(),
-    train_env.action_spec(),
-    fc_layer_params=fc_layer_params)
 
 
 
-while True:
-    print("fell Through")
-    input("")
+def build_model():
+    model = tf.keras.Sequential([
+        tf.keras.layers.InputLayer(input_shape =inputArray.shape),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(36,activation="relu", name="Layer1"),
+        tf.keras.layers.Dense(36, activation = "linear")
+        ])
+
+
+    return model
+
+
+
+
+class ReplayBuffer(object):
+    def __init__(self, max_size, input_shape, n_actions):
+        self.mem_size = max_size
+        self.discrete = True
+        self.state_memory = np.zeros((self.mem_size, input_shape))
+        self.new_state_memory = np.zeros((self.mem_size, input_shape))
+        dtype = np.int32
+        self.action_memory = np.zeros((self.mem_size, n_actions), dtype=dtype)
+        self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
+        self.terminal_memory = np.zeros(self.mem_size, dtype=np.float32)
+        self.mem_cntr = 0
+
+    def store_transition(self, state, action, reward, state_, done):
+        index = self.mem_cntr % self.mem_size
+        self.state_memory[index] = state
+        self.new_state_memory[index] = state_
+        self.reward_memory[index] = reward
+        self.terminal_memory[index] = 1 - int(done)
+
+        actions = np.zeros(self.action_memory.shape[1])
+        actions[actions] = 1
+        self.action_memory[index] = actions
+
+        self.mem_cntr += 1
+
+    def sample_buffer(self, batch_size):
+        max_mem = min(self.mem_cntr, self.mem_size)
+        batch = np.random.choice(max_mem,batch_size)
+
+        states = self.state_memory[batch]
+        states_ = self.new_state_memory[batch]
+        rewards = self.reward_memory[batch]
+        actions = self.action_memory[batch]
+        terminal = self.terminal_memory[batch]
+
+        return states, states_, rewards, actions, terminal
+
+def build_dqn(lr, n_actions, input_dims, fcl_dims, fc2_dims):
+    model = Sequential([
+            Dense(fcl_dims, input_shape=(input_dims,)),
+            Activation('relu'),
+            Dense(fc2_dims),
+            Activation('relu'),
+            Dense(n_actions)
+        ])
+
+    model.compile(optimizer=Adam(lr=lr), loss='mse')
+
+    return model
+
+
+class Agent(object):
+    def __init__(self, alpha, gamma, n_actions, epsilon, batch_size, input_dims, epsilon_dec=0.996, epsilon_min=0.01, mem_size=10000,fname='dqn_model.h5'):
+        self.action_space = [i for i in range(n_actions)]
+        self.n_actions = n_actions
+        self.gamma = gamma
+        self.epsilon = epsilon
+        self.epsilon_dec = epsilon_dec
+        self.epsilon_min = epsilon_min
+        self.batch_size = batch_size
+        self.model_file = fname
+        
+        self.memory = ReplayBuffer(mem_size, input_dims, n_actions)
+
+        self.q_eval = build_dqn(alpha,n_actions,input_dims,256,256)
+
+    def remember(self, state, action, reward, new_state,done):
+        self.memory.store_transition(state,action,reward, new_state, done)
+
+    def choose_action(self, state):
+        state = state[np.newaxis, :]
+        rand = np.random.random()
+        if rand < self.epsilon:
+            action = np.random.choice(self.action_space)
+        else:
+            actions = self.q_eval.predict(state)
+            action = np.argmax(actions)
+
+        return action
+
+    def learn(self):
+        if self.memory.mem_cntr < self.batch_size:
+            return
+        state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
+
+        action_values = np.array(self.action_space, dtype=np.int32)
+        action_indices = np.dot(action, action_values)
+
+        q_eval = self.q_eval.predict(state)
+        q_next = self.q_eval.predict(new_state)
+
+        q_target = q_eval.copy()
+
+        batch_index = np.arrange(self.batch_size, dtype=np.int32)
+
+        q_target[batch_index, action_indices] = reward + self.gama*np.max(q_next, axis=1) * done
+
+        self.q_eval.fit(state,q_target,verbose=0)
+
+        self.epsilon = self.epsilon*self.epsilon_dec if self.epsilon > self.epsilon_min else self.epsilon_min
+
+
+    def save_model(self):
+        self.q_eval.save(self.model_file)
+
+    def load_model(self):
+        self.q_eval = load_model(self.model_file)
+
+
+
+
+def main():
+
+    env2 = AutoPetsEnv()
+    #utils.validate_py_environment(env, episodes=15)
+
+    env = gym.make("lunarLander-v2")
+    n_games = 500
+
+    agent = Agent(gamma= .99,epsilon = 1.0, alpha=0.0005,input_dims=3,n_actions=36, mem_size=10000,batch_size=64)
+
+    scores = []
+    eps_history = []
+
+    for i in range(n_games):
+        done = False
+        score = 0
+        observation = env.reset()
+        while not done:
+            action = agent.choose_action(observation)
+            observation_, reward,done,info = env.step(action)
+            score += reward
+            agent.remember(observation,action,reward,observation_,done)
+            observation = observation_
+            agent.learn()
+
+        eps_history.append(agent.epsilon)
+        scores.append(score)
+
+        avg_score = np.mean(scores[max(0,i-100): (i+1)])
+        print("episode ", i, " score %.2f " % score, "Average_score %.2f" % avg_score)
+
+        if i % 10 == 0 and i > 0:
+            agent.save_model()
+
+    filename = "autopetsmodel.png"
+    x = [i+1 for i in range(n_games)]
+    plotlearning(x,scores,eps_history, filename)
+
+    while True:
+        print("fell Through")
+        input("")
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
 
 

@@ -148,8 +148,50 @@ namespace GameSimulation
 
         public virtual equipment Equip { get; set; }
         public virtual int Xp { get; set; }
-        public virtual int Hp { get; set; }
-        public virtual int Attack { get; set; }
+
+        private int hp = 0;
+        private int at = 0;
+        public virtual int Hp
+        {
+            get => hp;
+            set
+            {
+                if (value >= 50)
+                {
+                    hp = 50;
+                }
+                else if (value <= 0)
+                {
+                    hp = 0;
+                }
+                else
+                {
+                    hp = value;
+                }
+
+            }
+        }
+
+        public virtual int Attack
+        {
+            get => at;
+            set 
+            {
+                if(value >= 50)
+                {
+                    at = 50;
+                }
+                else if(value <= 0)
+                {
+                    at = 0;
+                }
+                else
+                {
+                    at = value;
+                }
+
+            }
+        }
         public abstract PetsNames Name { get; }
 
         public virtual int[] PetValues()

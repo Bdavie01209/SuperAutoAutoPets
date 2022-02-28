@@ -15,7 +15,7 @@ namespace GameSimulation
         static void Main(string[] args)
         {
             bool selfControl = true;
-            bool render = true;
+            bool render = false;
             bool RandTeams = true;
             Environment env = new Environment(selfControl, render, RandTeams);
 

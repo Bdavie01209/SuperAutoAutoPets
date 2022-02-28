@@ -462,11 +462,16 @@ namespace GameSimulation
         private void attack(Pets[] teamPets, Pets[] enemypets)
         {
             teamPets[4].OnAttack(teamPets, enemypets);
-            enemypets[4].OnAttack(enemypets, teamPets);
-            int damageE = teamPets[4].Attack;
+            if(enemypets[4] != null)
+                enemypets[4].OnAttack(enemypets, teamPets);
+            
+            if (teamPets[4] != null && enemypets[4] != null)
+            {
+                int damageE = teamPets[4].Attack;
+                teamPets[4].OnDamage(enemypets[4].Attack, teamPets, enemypets, 4);
+                enemypets[4].OnDamage(damageE, enemypets, teamPets, 4);
+            }
 
-            teamPets[4].OnDamage(enemypets[4].Attack, teamPets, enemypets, 4);
-            enemypets[4].OnDamage(damageE, enemypets, teamPets, 4);
         }
 
         public Pets RandomPet(int i)

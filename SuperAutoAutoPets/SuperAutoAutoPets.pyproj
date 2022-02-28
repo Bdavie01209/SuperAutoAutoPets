@@ -24,9 +24,28 @@
     <Compile Include="SuperAutoAutoPets.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="foodspngs\apple.PNG" />
+    <Content Include="foodspngs\applefrozen.PNG" />
+    <Content Include="foodspngs\can.PNG" />
+    <Content Include="foodspngs\canfrozen.PNG" />
+    <Content Include="foodspngs\cupcake.PNG" />
+    <Content Include="foodspngs\cupcakefrozen.PNG" />
+    <Content Include="foodspngs\garlic.PNG" />
+    <Content Include="foodspngs\garlicfrozen.PNG" />
+    <Content Include="foodspngs\honey.png" />
+    <Content Include="foodspngs\honeyfrozen.PNG" />
+    <Content Include="foodspngs\meat.PNG" />
+    <Content Include="foodspngs\meatfrozen.PNG" />
+    <Content Include="foodspngs\pear.PNG" />
+    <Content Include="foodspngs\pearfrozen.PNG" />
+    <Content Include="foodspngs\pill.PNG" />
+    <Content Include="foodspngs\pillfrozen.PNG" />
+    <Content Include="foodspngs\salad.PNG" />
+    <Content Include="foodspngs\saladfrozen.PNG" />
     <Content Include="super auto pets ui positions.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="foodspngs\" />
     <Folder Include="petspngs\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

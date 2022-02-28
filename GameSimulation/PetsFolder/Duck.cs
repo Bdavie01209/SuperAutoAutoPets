@@ -13,7 +13,7 @@ namespace GameSimulation.PetsFolder
         public Duck(int ExtraHp, int ExtraAtt)
         {
             Attack = 1 + ExtraAtt;
-            Hp = 2 + ExtraHp;
+            Hp = 3 + ExtraHp;
             Xp = 0;
         }
 
