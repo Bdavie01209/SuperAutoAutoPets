@@ -14,11 +14,43 @@ time.sleep(3) # this could be removed instead just opening the server first
 host = "127.0.0.1"
 port = 9012     
 #pytesseract.pytesseract.tesseract_cmd = "path to tesseract"
-Server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-Server.connect((host, port))
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-turn = 1;
+server.bind((host, port))
+
+open = True
+
+server.listen(1)
+commSocket = None
+
+
+while commSocket == None:
+    print("waiting to connect...")
+    commSocket, address = server.accept()
+    print(f"Connected to {address}")
+
+
+
+
+uiDictShop = {
+	'0':(520, 700), #shop1
+	'1':(700,700), #shop2
+	'2':(820, 700), #shop3
+	'3':(950, 700), #shop4
+	'4':(1100, 700), #shop5
+
+	'5' :(1250, 700), #shopf2
+	'6' : (1400, 700), #shopf1
+	}
+
+uiDictAnimals = {
+	'0':(530, 450), #team1
+	'1':(650, 450), #team2
+	'2':(800, 450), #team3
+	'3':(950,450), #team4
+	'4':(1100, 450), #team5
+	}
 
 uidict = {
 	'1':(520, 700), #shop1
@@ -87,29 +119,18 @@ petlistpngs = {
 
 foodListPngs = {
 	"meat.PNG",
-	"meatfrozen.PNG",
-	"pear.PNG",
-	"pearfrozen.PNG",
-	"pill.PNG",
-	"pillfrozen.PNG",
+	#"pear.PNG",
 	"salad.PNG",
-	"saladfrozen.PNG",
 	"apple.PNG",
-	"applefrozen.PNG",
 	"can.PNG",
-	"canfrozen.PNG",
 	"cupcake.PNG",
-	"cupcakefrozen.PNG",
 	"garlic.PNG",
-	"garlicfrozen.PNG",
-	"honey.PNG",
-	"honeyfrozen.PNG"
+	"honey.PNG"
 }
 
 #these locations were found on a 1080 x 1920 screen with an assistant program that tracks locations
 shopBoxesPets = [((475,630),(600, 775)),((605, 630 ),(730, 775)),((750,630),(875, 775)),((900,630),(1025, 775)),((1030,630),(1155, 775))]
 shopBoxesFoods = [((1175,630),(1300, 775)),((1315, 630 ),(1430, 775))]
-
 
 
 #should search the shop space and return the current pets in the shop
@@ -157,155 +178,108 @@ def shopFoodFind():
 	return returnlist
 
 
-
-def findattackandhealthofposisition(position):
-	if position == 0:
-		attack = pyautogui.screenshot("attack.png", region =(486, 490, 50, 50))
-		health = pyautogui.screenshot("health.png", region =(550, 490, 40, 50))
-	elif position == 1:
-		attack = pyautogui.screenshot("attack.png", region =(621, 490, 50, 50))
-		health = pyautogui.screenshot("health.png", region =(693, 490, 40, 50))
-	elif position == 2:
-		attack = pyautogui.screenshot("attack.png", region =(621, 490, 50, 50))
-		health = pyautogui.screenshot("health.png", region =(693, 490, 40, 50))
-	elif position == 3:
-		attack = pyautogui.screenshot("attack.png", region =(621, 490, 50, 50))
-		health = pyautogui.screenshot("health.png", region =(693, 490, 40, 50))
-	elif position == 4:
-		attack = pyautogui.screenshot("attack.png", region =(621, 490, 50, 50))
-		health = pyautogui.screenshot("health.png", region =(693, 490, 40, 50))	
-
-	health, attack = HealthAndAttack()
-	return attack, health
-
-
-def HealthAndAttack():
-	attackimg = cv2.imread("attack.png", cv2.IMREAD_GRAYSCALE)
-	healthimg = cv2.imread("health.png", cv2.IMREAD_GRAYSCALE)
-	
-	healthimg = cv2.copyMakeBorder(healthimg, 50, 50, 50, 50, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-
-	attackimg = cv2.threshold(attackimg, 100, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)[1]
-	attackimg = cv2.resize(attackimg, (0,0), fx=1.45, fy=1.45) 
-
-	healthimg = cv2.threshold(healthimg, 100, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)[1]
-	healthimg = cv2.resize(healthimg, (0,0), fx=1.45, fy=1.45)
-
-	attack = pytesseract.image_to_string(attackimg, lang='eng', \
-           config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
-	health = pytesseract.image_to_string(healthimg, lang='eng', \
-           config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
-
-	cv2.imwrite("greyhp.png", healthimg)
-	cv2.imwrite("greyattack.png", attackimg)
-
-	if attack == "":
-		attack = 0
-	if health == "":
-		health = 0
-	return health, attack
-
 def click2spots(spot1, spot2):
-	pyautogui.click(spot1)
-	pyautogui.click(spot2)
+	Click(spot1)
+	Click(spot2)
 
-def click(spot):
+def Click(spot):
 	pyautogui.click(spot)
-
-def clickdic(Keypressed):
-	try:
-		pyautogui.click(uidict[Keypressed])
-		return True;
-	except:
-		return False;
+	time.sleep(.5)
 
 def buyslot(shoppos, slotalpha):
-	click2spots(uidict[shoppos], uidict[slotalpha])
+	click2spots(uiDictShop[shoppos], uiDictAnimals[slotalpha])
 
-def reset():
-	turn = 1
 
-# buy message comes in as BUY shopops, slotAlpha it should only be shoppos slotalpha by the time it reaches here
+
+def checkWin():
+	print("waiting for Win/Lose/Draw")
+	return keyboard.read_key()
+
+
+
+
+# buy message comes in as shopops, slotAlpha it should only be shoppos slotalpha by the time it reaches here
 def buy(message):
 	buyslot(message[0], message[1])
 	return "PAS"
 
+def sellthenbuy(message):
+	click2spots(uiDictAnimals[message[1]], uidict['w'])
+	return buy(message)
 
 def endTurn():
-	click(uidict['e'])
+	Click(uidict['e'])
 	time.sleep(1)
-	click((1200,700))
-	if(turn == 1):
-		click(uidict['1'])
-		click(uidict['a'])
-		click(uidict['e'])
+	Click((1200,700))
 	TurnDone = False
 	while TurnDone != True:
 		try:
 			loc = pyautogui.locateOnScreen("endturnscreen.PNG", confidence=0.97)
 			if loc != None:
-				pyautogui.click(loc)
+				Click(loc)
 				time.sleep(2)
-				pyautogui.click((1600,200))
+				Click((1600,200))
 				TurnDone = True
 		except:
 			pass
-	return "PAS"
+	return checkWin()
 
 def reroll():
-	click(uidict['r'])
-	return createSAU()
+	Click(uidict['r'])
+	x = createSAU() + " " + createSFU()
+	print(x)
+	return x
 
 
 def sendMessage(message):
-    Server.send(message.encode("utf-8"))
+    commSocket.send(message.encode("utf-8"))
 
-#SAU should be in format "SAU pet1 f/UF pet2 F/UF pet3 f/UF...
+#SAU should be in format "pet1 pet2 pet3 ...
 def createSAU():
 	petShopStrings = shopPetsFind()
-	returnString = "SAU "
+	returnString = ""
+	first = True
 	for petStrings in petShopStrings:
-		returnString = "".join((returnString, " " , petStrings))
+		if first:
+			returnString = petStrings
+			first = False
+		else:
+			returnString = returnString + " " + petStrings
 	print(returnString)
 	return returnString
 
-#SFU should be in format "SFU food1, food2"
+#SFU should be in format "food1 food2"
 def createSFU():
 	foodShopStrings = shopFoodFind()
-	returnString = "SFU "
+	returnString = ""
 	for foodstrings in foodShopStrings:
 		returnString = "".join((returnString, " " , foodstrings))
 	print(returnString)
 	return returnString
 	
 
-def createAHU():
-	returnString = "AHU "
-	attack0, health0 = findattackandhealthofposisition(0)
-	attack1, health1 = findattackandhealthofposisition(1)
-	attack2, health2 = findattackandhealthofposisition(2)
-	attack3, health3 = findattackandhealthofposisition(3)
-	attack4, health4 = findattackandhealthofposisition(4)
-	returnString = "".join((returnString, str(attack0), " ", str(health0), " ", str(attack1), " ", str(health1), " ", str(attack2), " ", str(health2), " ", str(attack3), " ", str(health3), " ", str(attack4), " ", str(health4)))
-
-	return returnString
-
 def receivemessage(message):
-	if message[0:3] == "AHU": #attack health update
-		sendMessage(createAHU())
-	if message[0:3] == "SAU": #Shop Animals Update
-		sendMessage(createSAU())
-	if message[0:3] == "SFU": #Shop Animals Update
-		sendMessage(createSFU())
+	print(message)
 	if message[0:3] == "RER": #Reroll
 		sendMessage(reroll())
-	if message[0:3] == "BUY":
+	elif message[0:3] == "FSU":
+		x = createSAU() + " " + createSFU()
+		print(x)
+		sendMessage(x)
+	elif message[0:3] == "END":
+		sendMessage(endTurn())
+	elif message[0:3] == "BUY":
 		messageinfo = message.split()
 		sendMessage(buy(messageinfo[:][1:3]))
-	if message[0:3] == "END":
-		sendMessage(endTurn())
+	elif message[0:3] == "OVR":
+		messageinfo = message.split()
+		sendMessage(sellthenbuy(messageinfo[:][1:3]))
+	elif message[0:3] == "CLO":
+		open = False
+		commSocket.Close()
+		
 
 
 
-while True:
-	receivemessage(Server.recv(1024).decode("utf-8"))
+while open:
+	receivemessage(commSocket.recv(1024).decode("utf-8"))

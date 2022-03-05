@@ -13,9 +13,18 @@ namespace GameSimulation
         {
             return petNumber switch
             {
+                //teir 2
+                17 => new Spider(ExtraHp, ExtraAttack),
+                16 => new Shrimp(ExtraHp, ExtraAttack),
+                15 => new Rat(ExtraHp, ExtraAttack),
+                14 => new Peacock(ExtraHp, ExtraAttack),
+                13 => new Hedgehog(ExtraHp, ExtraAttack),
+                12 => new Flamingo(ExtraHp, ExtraAttack),
+                11 => new Elephant(ExtraHp, ExtraAttack),
                 10 => new Dodo(ExtraHp, ExtraAttack),
                 9 => new Crab(ExtraHp,ExtraAttack),
 
+                //teir 1
                 8 => new Pig(ExtraHp, ExtraAttack),
                 7 => new Otter(ExtraHp, ExtraAttack),
                 6 => new Mosquito(ExtraHp, ExtraAttack),

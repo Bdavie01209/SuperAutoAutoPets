@@ -43,7 +43,8 @@ namespace GameSimulation
                 return Encoding.UTF8.GetString(buffer, 0, numBytesRead);
             }
 
-            return "oopsie woopsie";
+            Console.WriteLine("oopsie woopsie in the server recieveMessage function of the server class");
+            return ReceiveMessage();
 
         }
 

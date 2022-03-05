@@ -13,7 +13,7 @@ from tf_agents.drivers import py_driver
 from tf_agents.environments import py_environment
 from tf_agents.environments import tf_environment
 from tf_agents.environments import tf_py_environment
-from tf_agents.environments import utils
+#from tf_agents.environments import utils
 from tf_agents.specs import array_spec
 from tf_agents.environments import wrappers
 from tf_agents.environments import suite_gym
@@ -25,6 +25,8 @@ from tensorflow import keras
 from keras.layers import Dense, Activation
 from keras.models import Sequential, load_model
 from tensorflow.keras.optimizers import Adam 
+from utils import plotLearning
+
 
 
 host = "127.0.0.1"
@@ -36,8 +38,6 @@ server.bind((host, port))
 
 server.listen(1)
 commSocket = None
-
-echo = False
 
 inputArray = np.zeros((3,5,5), dtype=np.int32)
 
@@ -51,8 +51,6 @@ while commSocket == None:
 def sendMessage(message):
     commSocket.send(message.encode("utf-8"))
 
-
-inputSize = 3*5*5
 
 def receive355array(Message):
     MessageArrayX = Message.split("|")
@@ -266,8 +264,8 @@ class AutoPetsEnv(py_environment.PyEnvironment):
             self._episode_ended = True;
             return ts.termination(self._state, self.rewardCalc())
         else:
-            if(self.rewardCalc() > 20):
-                partial = 1
+            if(self._state[2,2,2] == 1):
+                partial = self.rewardCalc()
             else:
                 partial = 0
             return ts.transition(self._state, reward=partial, discount=1.0)
@@ -276,29 +274,14 @@ class AutoPetsEnv(py_environment.PyEnvironment):
 
 
 
-
-def build_model():
-    model = tf.keras.Sequential([
-        tf.keras.layers.InputLayer(input_shape =inputArray.shape),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(36,activation="relu", name="Layer1"),
-        tf.keras.layers.Dense(36, activation = "linear")
-        ])
-
-
-    return model
-
-
-
-
+#the model is a instantiation of https://github.com/philtabor/Youtube-Code-Repository/blob/master/ReinforcementLearning/DeepQLearning/ddqn_keras.py with my parameters hard coded in
 class ReplayBuffer(object):
     def __init__(self, max_size, input_shape, n_actions):
         self.mem_size = max_size
         self.discrete = True
         self.state_memory = np.zeros((self.mem_size, input_shape))
         self.new_state_memory = np.zeros((self.mem_size, input_shape))
-        dtype = np.int32
-        self.action_memory = np.zeros((self.mem_size, n_actions), dtype=dtype)
+        self.action_memory = np.zeros((self.mem_size, n_actions), dtype=np.int32)
         self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.float32)
         self.mem_cntr = 0
@@ -311,7 +294,7 @@ class ReplayBuffer(object):
         self.terminal_memory[index] = 1 - int(done)
 
         actions = np.zeros(self.action_memory.shape[1])
-        actions[actions] = 1
+        actions[action] = 1.0
         self.action_memory[index] = actions
 
         self.mem_cntr += 1
@@ -319,7 +302,6 @@ class ReplayBuffer(object):
     def sample_buffer(self, batch_size):
         max_mem = min(self.mem_cntr, self.mem_size)
         batch = np.random.choice(max_mem,batch_size)
-
         states = self.state_memory[batch]
         states_ = self.new_state_memory[batch]
         rewards = self.reward_memory[batch]
@@ -374,19 +356,21 @@ class Agent(object):
     def learn(self):
         if self.memory.mem_cntr < self.batch_size:
             return
-        state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
+        state, new_state,reward, action , done = self.memory.sample_buffer(self.batch_size)
 
         action_values = np.array(self.action_space, dtype=np.int32)
         action_indices = np.dot(action, action_values)
 
         q_eval = self.q_eval.predict(state)
+
         q_next = self.q_eval.predict(new_state)
 
         q_target = q_eval.copy()
 
-        batch_index = np.arrange(self.batch_size, dtype=np.int32)
+        batch_index = np.arange(self.batch_size, dtype=np.int32)    
 
-        q_target[batch_index, action_indices] = reward + self.gama*np.max(q_next, axis=1) * done
+        q_target[batch_index, action_indices] = reward + \
+                                  self.gamma*np.max(q_next, axis=1)*done
 
         self.q_eval.fit(state,q_target,verbose=0)
 
@@ -400,49 +384,73 @@ class Agent(object):
         self.q_eval = load_model(self.model_file)
 
 
-
-
 def main():
 
-    env2 = AutoPetsEnv()
+    env = AutoPetsEnv()
     #utils.validate_py_environment(env, episodes=15)
 
-    env = gym.make("lunarLander-v2")
+    learn = input("learn or test: ")
+
+    if learn.upper() != "T":
+        learn = True
+
+
+
     n_games = 500
+    if learn:
+        agent = Agent(gamma= .99,epsilon = 1.0, alpha=0.0005,input_dims=75, n_actions=36, mem_size=10000,batch_size=64)
+    else:
+        agent = Agent(gamma= .99,epsilon = 0,epsilon_min=0.00, alpha=0,input_dims=75, n_actions=36, mem_size=10000,batch_size=64)
 
-    agent = Agent(gamma= .99,epsilon = 1.0, alpha=0.0005,input_dims=3,n_actions=36, mem_size=10000,batch_size=64)
-
+    agent.load_model();
     scores = []
     eps_history = []
 
-    for i in range(n_games):
-        done = False
-        score = 0
-        observation = env.reset()
+    if learn:
+        for i in range(n_games):
+            done = False
+            score = 0
+            observation = (env.reset().observation).flatten()
+            while not done:
+                action = agent.choose_action(observation)
+                timestep  = env.step(action)
+                observation_ = timestep.observation.flatten()
+                reward = timestep.reward
+                done = timestep.is_last()
+                score += reward
+                agent.remember(observation,action,reward,observation_,done)
+                observation = observation_
+                agent.learn()
+
+            eps_history.append(agent.epsilon)
+            scores.append(score)
+
+            avg_score = np.mean(scores[max(0,i-100): (i+1)])
+            if i % 10 == 0 and i > 0:
+                print("episode ", i, " score %.2f " % score, "Average_score %.2f" % avg_score)
+                agent.save_model()
+
+
+
+
+
+        filename = "autopetsmodel.png"
+        x = [i+1 for i in range(n_games)]
+        plotLearning(x,scores,eps_history, filename)
+
+    else:
+        done = false
+        observation = (env.reset().observation).flatten()
         while not done:
             action = agent.choose_action(observation)
-            observation_, reward,done,info = env.step(action)
-            score += reward
-            agent.remember(observation,action,reward,observation_,done)
-            observation = observation_
-            agent.learn()
+        
 
-        eps_history.append(agent.epsilon)
-        scores.append(score)
-
-        avg_score = np.mean(scores[max(0,i-100): (i+1)])
-        print("episode ", i, " score %.2f " % score, "Average_score %.2f" % avg_score)
-
-        if i % 10 == 0 and i > 0:
-            agent.save_model()
-
-    filename = "autopetsmodel.png"
-    x = [i+1 for i in range(n_games)]
-    plotlearning(x,scores,eps_history, filename)
 
     while True:
         print("fell Through")
         input("")
+
+
 
 
 

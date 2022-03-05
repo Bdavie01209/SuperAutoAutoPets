@@ -7,8 +7,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SuperAutoAutoPets", "SuperA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetPics", "PetPics", "{6BAD0CDC-C686-44B4-950B-98FD8C96CC1E}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "SuperAutoAutoPetsServer", "SuperAutoAutoPetsServer\SuperAutoAutoPetsServer.pyproj", "{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSimulation", "GameSimulation\GameSimulation.csproj", "{FBA6E298-97A6-4EFB-A959-08B9D3CF6071}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Model", "Model\Model\Model.pyproj", "{5AE6B464-82E2-4CC9-A71B-41E54618DAE4}"
@@ -21,8 +19,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C840B9C8-FF5A-470D-AEC4-F4E3CD486562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C840B9C8-FF5A-470D-AEC4-F4E3CD486562}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1093CF9-8D5B-45A7-92E6-3DFAF4146308}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBA6E298-97A6-4EFB-A959-08B9D3CF6071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBA6E298-97A6-4EFB-A959-08B9D3CF6071}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBA6E298-97A6-4EFB-A959-08B9D3CF6071}.Release|Any CPU.ActiveCfg = Release|Any CPU

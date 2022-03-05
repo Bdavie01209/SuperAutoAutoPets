@@ -13,7 +13,8 @@ namespace GameSimulation
         {
             return i switch
             {
-                _ => new Apple(),
+                1 => new Honey(),
+                _ => new Apple()
             };
         }
         public abstract foodNames Name { get; }

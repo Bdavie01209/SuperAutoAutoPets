@@ -16,27 +16,36 @@ namespace GameSimulation
         {
             bool selfControl = true;
             bool render = false;
-            bool RandTeams = true;
-            Environment env = new Environment(selfControl, render, RandTeams);
 
-            /*
-            for (int i = 0; i < 10; i++)
-            {
-                Environment test1 = new Environment(selfControl, true, RandTeams);
-                test1.Team[0] = new Mosquito(0,0);
-                test1.Team[1] = new Mosquito(0,0);
-                test1.Team[2] = new Mosquito(0,0);
 
-                Console.WriteLine(test1.TeamFight(new Pets[5] { new Mosquito(0,0), new Mosquito(0,0), new Mosquito(0,0), null, null}));
+            Console.WriteLine("Render? y/n");
+            render = Console.ReadKey().ToString().ToUpper() == "Y";
 
-            }
-            */
+            Console.WriteLine("SelfControl? y/n");
+            selfControl = Console.ReadKey().ToString().ToUpper() == "Y";
+
+
+            Environment env = new Environment(selfControl, render);
+
             Console.ReadKey();
 
             //Below is the server 
 
             Server Sock = new Server(1025, "127.0.0.1");
-            Controller Con = new Controller(env, Sock);
+
+            Console.ReadKey();
+
+            Server guiSock = new Server(9012, "127.0.0.1");
+            Controller Con = new Controller(env, Sock, guiSock);
+
+            if (!selfControl)
+            {
+                env.AddDelegates(Con.SendActionToGui,Con.DeterminWin,Con.ReRoll);
+            }
+            else
+            {
+                guiSock.SendMessage("CLO");
+            }
 
             while(true)
             {
