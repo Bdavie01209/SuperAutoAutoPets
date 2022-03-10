@@ -20,44 +20,28 @@ namespace GameSimulation.PetsFolder
 
         public override void OnBattleStart(Pets[] team, Pets[] enemy, int pos)
         {
-            int shots = 1;
-
-            switch (Xp)
-            {
-                case 5:
-                    shots = 3;
-                    break;
-                case 4:
-                case 3:
-                case 2:
-                    shots = 2;
-                    break;
-                default:
-                    shots = 1;
-                    break;
-            }
-            int[] PostionsHit = new int[3] { -1, -1, -1 };
-            while (shots > 0)
+            int shots = this.Level() - 1;
+            int[] PositionHit = new int[3] { -1, -1, -1 };
+            while (shots >= 0)
             {
                 bool targetsleft = false;
                 for (int i = 0; i < 5; i++)
                 {
                     if (enemy[i] != null)
                     {
-                        if (i != PostionsHit[0] && i != PostionsHit[1] && i != PostionsHit[2])
+                        if (!PositionHit.Contains(i))
                         {
                             targetsleft = true;
                         }
                     }
                 }
-                int hitloc = rn.Next(1, 6) - 1;
-                if (enemy[hitloc] != null)
+                int hitloc = rn.Next(0, 5);
+                if (enemy[hitloc] != null && !PositionHit.Contains(hitloc))
                 {
-                    if (hitloc != PostionsHit[0] && hitloc != PostionsHit[1] && hitloc != PostionsHit[2])
-                    {
-                        enemy[hitloc].OnDamage(1, enemy, team, hitloc);
-                        shots -= 1;
-                    }
+                    enemy[hitloc].OnDamage(1, enemy, team, hitloc);
+                    PositionHit[shots] = hitloc;
+                    shots -= 1;
+
                 }
                 if (!targetsleft)
                 {

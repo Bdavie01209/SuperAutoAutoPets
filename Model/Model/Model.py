@@ -389,20 +389,24 @@ def main():
     env = AutoPetsEnv()
     #utils.validate_py_environment(env, episodes=15)
 
-    learn = input("learn or test: ")
+    learnInput = input("learn or test: ")
 
-    if learn.upper() != "T":
-        learn = True
+    learn = True;
 
+    n_games = 2000
 
-
-    n_games = 500
+    if learnInput.upper() == "T":
+        learn = False;
+        n_games = int(input("number games"))
+    
     if learn:
         agent = Agent(gamma= .99,epsilon = 1.0, alpha=0.0005,input_dims=75, n_actions=36, mem_size=10000,batch_size=64)
     else:
         agent = Agent(gamma= .99,epsilon = 0,epsilon_min=0.00, alpha=0,input_dims=75, n_actions=36, mem_size=10000,batch_size=64)
+    
+    if learnInput.upper() != "LEARN OVERRIDE":
+        agent.load_model()
 
-    agent.load_model();
     scores = []
     eps_history = []
 
@@ -439,10 +443,16 @@ def main():
         plotLearning(x,scores,eps_history, filename)
 
     else:
-        done = false
-        observation = (env.reset().observation).flatten()
-        while not done:
-            action = agent.choose_action(observation)
+        while n_games > 0:
+            done = False
+            observation = (env.reset().observation).flatten()
+            while not done:
+                action = agent.choose_action(observation)
+                timestep  = env.step(action)
+                observation_ = timestep.observation.flatten()
+                done = timestep.is_last()
+                observation = observation_
+            n_games -= 1
         
 
 

@@ -47,6 +47,10 @@ namespace GameSimulation
             return ReceiveMessage();
 
         }
+        public void close()
+        {
+            client.Close();
+        }
 
         public void Send355Array(int[,,] Array)
         {

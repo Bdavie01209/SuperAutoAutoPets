@@ -48,20 +48,6 @@ namespace GameSimulation
             TurnStartFlag = false;
         }
 
-        public Pets[] copyTeam()
-        {
-            Pets[] returnValue = new Pets[5];
-            for (int i = 0; i < 5; i++)
-            {
-                if (Team[i] != null)
-                {
-                    returnValue[i] = Team[i].Clone();
-                }
-            }
-            return returnValue;
-        }
-
-
         public void Reset()
         {
             Team = new Pets[5];
@@ -88,11 +74,27 @@ namespace GameSimulation
             }
         }
 
+        private Pets[] copyTeam()
+        {
+            Pets[] returnValue = new Pets[5];
+            for (int i = 0; i < 5; i++)
+            {
+                if (Team[i] != null)
+                {
+                    returnValue[i] = Team[i].Clone();
+                }
+            }
+            return returnValue;
+        }
+
+
+
+
         /// <summary>
         /// rerolls the shop
         /// </summary>
         /// <param name="TS">this is for !selfcontrol states in which it sends a message to the gui stands for the first roll of the round</param>
-        public void Reroll(bool TS)
+        private void Reroll(bool TS)
         {
             gold--;
             if (selfcontrol)
@@ -104,7 +106,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 58));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 15));
+                            foodshop[i] = RandomFood(rn.Next(0, 14));
                         }
                     }
                 }
@@ -115,7 +117,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 49));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 12));
+                            foodshop[i] = RandomFood(rn.Next(0, 11));
                         }
                     }
                 }
@@ -126,7 +128,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 41));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 9));
+                            foodshop[i] = RandomFood(rn.Next(0, 8));
                         }
                     }
                 }
@@ -137,7 +139,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 30));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 7));
+                            foodshop[i] = RandomFood(rn.Next(0, 6));
                         }
                     }
                 }
@@ -148,7 +150,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 19));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 5));
+                            foodshop[i] = RandomFood(rn.Next(0, 4));
                         }
                     }
                 }
@@ -170,7 +172,7 @@ namespace GameSimulation
             }
         }
 
-        public double Turnend()
+        private double Turnend()
         {
             TurnStartFlag = true;
             double WinLossDraw;
@@ -192,13 +194,14 @@ namespace GameSimulation
             Turnstart();
             return WinLossDraw;
         }
+
         /// <summary>
         /// buys the item in posShop on the spot posToBuy
         /// </summary>
         /// <param name="posShop"></param>
         /// <param name="postoBuy"></param>
         /// <returns>1 if successfull -1 if failed from invalid purchase -2 if out of money</returns>
-        public int Buy(int posShop, int postoBuy)
+        private int Buy(int posShop, int postoBuy)
         {
             if (gold < 3)//no gold
             {
@@ -222,7 +225,7 @@ namespace GameSimulation
                         Team[postoBuy].OnSelfEat(this, postoBuy);
                         foodshop[posShop - 5].OnConsume(Team[postoBuy],this);
                         foodshop[posShop - 5] = null;
-                        foodShopRealignRight(posShop - 5);
+                        FoodShopRealignRight(posShop - 5);
                         return 1;
                     }
                 }
@@ -231,7 +234,7 @@ namespace GameSimulation
                     gold -= 3;
                     foodshop[posShop - 5].OnConsume(null, this); //this should only be active with aoe buffs
                     foodshop[posShop - 5] = null;
-                    foodShopRealignRight(posShop - 5);
+                    FoodShopRealignRight(posShop - 5);
                     return 1;
                 }
 
@@ -251,7 +254,7 @@ namespace GameSimulation
                     gold -= 3; //remove 3 gold
                     Petshop[posShop].OnBought(this, postoBuy); //buy the shop animal ant
                     Petshop[posShop] = null; //set the petshop to null
-                    petShopRealignLeft(posShop);
+                    PetShopRealignLeft(posShop);
                     return 2; //return successfull override
                 }
                 if (Team[postoBuy].Xp >= 5) //if the animal is not null and not the same it must be getting xp therefore check the xp of the animal
@@ -261,7 +264,7 @@ namespace GameSimulation
                 gold -= 3; 
                 Petshop[posShop].OnBought(this, postoBuy); //buy the animal
                 Petshop[posShop] = null;
-                petShopRealignLeft(posShop);
+                PetShopRealignLeft(posShop);
                 return 1;
 
             } 
@@ -270,13 +273,13 @@ namespace GameSimulation
                 gold -= 3;
                 Petshop[posShop].OnBought(this, postoBuy); //buy the animal
                 Petshop[posShop] = null; //set the shop to null
-                petShopRealignLeft(posShop);
+                PetShopRealignLeft(posShop);
                 return 1;
             }
         }
 
 
-        public void renderTeam(Pets[] Te)
+        public void RenderTeam(Pets[] Te)
         {
             string teamstring = "";
             string teamathp = "";
@@ -298,7 +301,7 @@ namespace GameSimulation
             Console.WriteLine("---------------");
             Console.WriteLine(teamathp);
         }
-        public void BringToFront(Pets[] Te) // [null,1,null,1,null]
+        private static void BringToFront(Pets[] Te) // [null,1,null,1,null]
         {
             bool sorted = false;
             while (!sorted)
@@ -335,7 +338,7 @@ namespace GameSimulation
 
         }
 
-        public void petShopRealignLeft(int spotBought)
+        private void PetShopRealignLeft(int spotBought)
         {
             Petshop[spotBought] = null;
             for (int i = spotBought; i < 4; i++)
@@ -345,7 +348,7 @@ namespace GameSimulation
             }
         }
 
-        public void foodShopRealignRight(int spotBought)
+        private void FoodShopRealignRight(int spotBought)
         {
             if (spotBought == 1)
             {
@@ -354,9 +357,20 @@ namespace GameSimulation
             }
         }
 
-
+        /// <summary>
+        /// copies the current team and has it fight against a randomly generated team. 
+        /// </summary>
+        /// <param name="EnemyTeam"></param>
+        /// <returns></returns>
         public double TeamFight(Pets[] EnemyTeam)
         {
+            if (render)
+            {
+                Console.WriteLine("Turn :" + this.Turn);
+                Console.WriteLine("Lives :" + this.Lives);
+                Console.WriteLine("Wins :" + this.wins);
+                RenderTeam(this.Team);
+            }
             if (EnemyTeam == null)
             {
                 EnemyTeam = CreateRandomTeam();
@@ -394,12 +408,8 @@ namespace GameSimulation
                 {
                     break;
                 }
-                attack(teamcopy, EnemyTeam);
-                if (render)
-                {
-                    renderTeam(teamcopy);
-                    renderTeam(EnemyTeam);
-                }
+                Attack(teamcopy, EnemyTeam);
+
 
 
             }
@@ -488,7 +498,7 @@ namespace GameSimulation
             return returnValue;
         }
 
-        private void attack(Pets[] teamPets, Pets[] enemypets)
+        private static void Attack(Pets[] teamPets, Pets[] enemypets)
         {
             teamPets[4].OnAttack(teamPets, enemypets);
             if(enemypets[4] != null)
@@ -521,7 +531,7 @@ namespace GameSimulation
         /*this should turn an environment state into a 3x5x5 array with inslice 0 being teams slice 1 being shop and slice 2 being foodshop, gold and turn
          * 
          */
-        public int[,,] Environmenttodata()
+        private int[,,] EnvironmentToData()
         {
             int[,,] environmentArray = new int[3,5,5];
             for (int i = 0; i < 5; i++)
@@ -591,6 +601,7 @@ namespace GameSimulation
                 this.Reroll(false);
             }
         }
+        
         /// <summary>
         /// Takes a given petString from the gui and returns a string of pets also handles food
         /// </summary>
@@ -614,7 +625,7 @@ namespace GameSimulation
                     PetsNames P;
                     if(Enum.TryParse(words[i],true, out P))
                     {
-                        shopPets[i] = Pets.PetsGen((int)P - 1, cans, cans);
+                        shopPets[i] = Pets.PetsGen((int)P , cans, cans);
                     }
                 }
             }
@@ -629,7 +640,7 @@ namespace GameSimulation
                     foodNames F;
                     if (Enum.TryParse(words[i], out F))
                     {
-                        shopFoods[i - 5] = Food.FoodGen((int)F - 1);
+                        shopFoods[i - 5] = Food.FoodGen((int)F);
                     }
                 }
             }
@@ -639,7 +650,12 @@ namespace GameSimulation
 
         }
 
-        public int[,,] processMessage(string Message)
+        /// <summary>
+        /// takes a given message in form int int, or PAS, or RESTART and does that action on this environment then returns the given state after the action
+        /// </summary>
+        /// <param name="Message"></param>
+        /// <returns>the envinorment as processed by EnvironmentToData</returns>
+        public int[,,] ProcessMessage(string Message)
         {
             TurnStartFlag = false;
             if(Message == "PAS")
@@ -682,7 +698,7 @@ namespace GameSimulation
             }
 
 
-            return Environmenttodata();
+            return EnvironmentToData();
         }
 
 

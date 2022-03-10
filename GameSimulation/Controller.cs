@@ -24,7 +24,7 @@ namespace GameSimulation
         public void Interact()
         {
             var m = ModelServer.ReceiveMessage();
-            ModelServer.Send355Array(Environment.processMessage(m));
+            ModelServer.Send355Array(Environment.ProcessMessage(m));
         }
 
 

@@ -19,10 +19,10 @@ namespace GameSimulation
 
 
             Console.WriteLine("Render? y/n");
-            render = Console.ReadKey().ToString().ToUpper() == "Y";
+            render = Console.ReadLine().ToUpper() == "Y";
 
             Console.WriteLine("SelfControl? y/n");
-            selfControl = Console.ReadKey().ToString().ToUpper() == "Y";
+            selfControl = Console.ReadLine().ToUpper() == "Y";
 
 
             Environment env = new Environment(selfControl, render);

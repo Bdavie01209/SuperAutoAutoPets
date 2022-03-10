@@ -8,7 +8,6 @@ namespace GameSimulation
 {
     public enum PetsNames
     {
-        none,
         Ant,
         Beaver,
         Cricket,
@@ -81,17 +80,16 @@ namespace GameSimulation
         ZombieFly,
         HoneyBee,
         Ram,
+        none
 
     }
     public enum foodNames 
     {
-        none,
         apple,
         honey,
 
         Cupcake,
         MeatBone,
-        SleepingPill,
         
         Garlic,
         SaladBowl,
@@ -108,7 +106,8 @@ namespace GameSimulation
         Pizza,
         Steak,
 
-        Milk
+        Milk,
+        none
     }
 
     public enum equipment

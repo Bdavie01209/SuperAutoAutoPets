@@ -13,13 +13,11 @@ time.sleep(3) # this could be removed instead just opening the server first
 
 host = "127.0.0.1"
 port = 9012     
-#pytesseract.pytesseract.tesseract_cmd = "path to tesseract"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 server.bind((host, port))
 
-open = True
 
 server.listen(1)
 commSocket = None
@@ -119,7 +117,7 @@ petlistpngs = {
 
 foodListPngs = {
 	"meat.PNG",
-	#"pear.PNG",
+	#"pear.PNG", #currenly causing issues with pyautogui as the only way to get a representative image is basicaly a single color square which is too vauge as grey scale it looks like apple
 	"salad.PNG",
 	"apple.PNG",
 	"can.PNG",
@@ -275,11 +273,9 @@ def receivemessage(message):
 		messageinfo = message.split()
 		sendMessage(sellthenbuy(messageinfo[:][1:3]))
 	elif message[0:3] == "CLO":
-		open = False
-		commSocket.Close()
-		
+		commSocket.close()
 
 
 
-while open:
+while not commSocket._closed:
 	receivemessage(commSocket.recv(1024).decode("utf-8"))

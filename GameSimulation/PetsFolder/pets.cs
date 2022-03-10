@@ -13,7 +13,11 @@ namespace GameSimulation
         {
             return petNumber switch
             {
-                //teir 2
+                //tier 3
+                19 => new Badger(ExtraHp, ExtraAttack),
+
+                //tier 2
+                18 => new Swan(ExtraHp, ExtraAttack),
                 17 => new Spider(ExtraHp, ExtraAttack),
                 16 => new Shrimp(ExtraHp, ExtraAttack),
                 15 => new Rat(ExtraHp, ExtraAttack),
@@ -24,11 +28,11 @@ namespace GameSimulation
                 10 => new Dodo(ExtraHp, ExtraAttack),
                 9 => new Crab(ExtraHp,ExtraAttack),
 
-                //teir 1
+                //tier 1
                 8 => new Pig(ExtraHp, ExtraAttack),
                 7 => new Otter(ExtraHp, ExtraAttack),
                 6 => new Mosquito(ExtraHp, ExtraAttack),
-                5 => new horse(ExtraHp, ExtraAttack),
+                5 => new Horse(ExtraHp, ExtraAttack),
                 4 => new Fish(ExtraHp, ExtraAttack),
                 3 => new Duck(ExtraHp, ExtraAttack),
                 2 => new Cricket(ExtraHp, ExtraAttack),

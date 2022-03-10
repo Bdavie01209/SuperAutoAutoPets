@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace GameSimulation.PetsFolder
 {
-    public class horse : Pets
+    public class Horse : Pets
     {
         public override PetsNames Name => PetsNames.Horse;
-        public horse(int bonushp, int bonusatt)
+        public Horse(int bonushp, int bonusatt)
         {
             this.Hp = 1 + bonushp;
             this.Attack = 2 + bonusatt;
