@@ -49,7 +49,7 @@ namespace GameSimulation
         {
             GUIServer.SendMessage("END");
             var m = GUIServer.ReceiveMessage();
-            Console.WriteLine("Received... m");
+            Console.WriteLine("Received..." + m);
             if (m.ToUpper() == "W")
             {
                 return 1.0;

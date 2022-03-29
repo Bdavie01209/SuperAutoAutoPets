@@ -19,6 +19,7 @@ namespace GameSimulation.PetsFolder
         public override void OnTurnStart(Environment env, int pos)
         {
             env.gold += this.Level();
+            base.OnTurnStart(env, pos);
         }
 
     }

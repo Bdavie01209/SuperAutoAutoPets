@@ -90,6 +90,7 @@ namespace GameSimulation
 
         Cupcake,
         MeatBone,
+        SleepingPill,
         
         Garlic,
         SaladBowl,

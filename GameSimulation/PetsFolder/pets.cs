@@ -133,7 +133,11 @@ namespace GameSimulation
         }
         public virtual void OnTurnStart(Environment env, int pos)
         {
-            //base case do nothing
+            for(int i = 0; i < this.Cupcake; i++)
+            {
+                this.Hp -= 3;
+                this.Attack -= 3;
+            }
         }
         public virtual void OnSelfEat(Environment env, int pos)
         {
@@ -162,6 +166,8 @@ namespace GameSimulation
         public virtual equipment Equip { get; set; }
         public virtual int Xp { get; set; }
 
+        public virtual int Cupcake { get; set; }
+
         private int hp = 0;
         private int at = 0;
         public virtual int Hp
@@ -187,7 +193,7 @@ namespace GameSimulation
 
         public virtual int Attack
         {
-            get => at;
+            get => at + ((this.Equip == equipment.MeatBone ? 1 : 0) * 5);
             set 
             {
                 if(value >= 50)

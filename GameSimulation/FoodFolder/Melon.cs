@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace GameSimulation.FoodFolder
 {
-    public class Apple : Food
+    public class Melon : Food
     {
-        public override foodNames Name { get => foodNames.apple; }
+        public override foodNames Name => foodNames.Melon;
 
         public override void OnConsume(Pets Pet, Environment env, int loc)
         {
-            Pet.Attack++;
-            Pet.Hp++;
+            Pet.Equip = equipment.Melon;
         }
+
     }
 }

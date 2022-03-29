@@ -18,12 +18,12 @@ namespace GameSimulation
         public int Turn;
         public int gold;
         public int wins;
-        public int Cans { get => cans * 2; set => cans = value; }
-        private int cans;
+        public int Cans { get => Cans; set => Cans = value; }
         public int Lives;
         bool selfcontrol;
         public bool render;
         public bool TurnStartFlag;
+        private bool PassFlag;
         private Random rn;
 
         private TakeActionDelegate SendToGui;
@@ -46,12 +46,14 @@ namespace GameSimulation
             rn = new Random();
             render = Render;
             TurnStartFlag = false;
+            PassFlag = false;
         }
 
         public void Reset()
         {
             Team = new Pets[5];
             Petshop = new Pets[5];
+            PassFlag = false;
             Turn = 0;
             gold = 10;
             Cans = 0;
@@ -106,7 +108,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 58));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 14));
+                            foodshop[i] = RandomFood(rn.Next(0, 16));
                         }
                     }
                 }
@@ -117,7 +119,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 49));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 11));
+                            foodshop[i] = RandomFood(rn.Next(0, 12));
                         }
                     }
                 }
@@ -128,7 +130,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 41));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 8));
+                            foodshop[i] = RandomFood(rn.Next(0, 9));
                         }
                     }
                 }
@@ -139,7 +141,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 30));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 6));
+                            foodshop[i] = RandomFood(rn.Next(0, 7));
                         }
                     }
                 }
@@ -150,7 +152,7 @@ namespace GameSimulation
                         Petshop[i] = RandomPet(rn.Next(0, 19));
                         if (i == 0 || i == 1)
                         {
-                            foodshop[i] = RandomFood(rn.Next(0, 4));
+                            foodshop[i] = RandomFood(rn.Next(0, 5));
                         }
                     }
                 }
@@ -213,6 +215,10 @@ namespace GameSimulation
                 {
                     return -1;
                 }
+                if (foodshop[posShop - 5].Name == foodNames.SleepingPill || foodshop[posShop - 5].Name == foodNames.Mushroom || foodshop[posShop - 5].Name == foodNames.Steak)
+                {
+                    return -1;
+                }
                 if (foodshop[posShop - 5].Name != foodNames.SaladBowl || foodshop[posShop - 5].Name != foodNames.Sushi || foodshop[posShop - 5].Name != foodNames.Pizza || foodshop[posShop -5].Name != foodNames.CannedFood) //all aoe foods don't need target
                 {
                     if (Team[postoBuy] == null)
@@ -223,7 +229,7 @@ namespace GameSimulation
                     {
                         gold -= 3;
                         Team[postoBuy].OnSelfEat(this, postoBuy);
-                        foodshop[posShop - 5].OnConsume(Team[postoBuy],this);
+                        foodshop[posShop - 5].OnConsume(Team[postoBuy],this, postoBuy);
                         foodshop[posShop - 5] = null;
                         FoodShopRealignRight(posShop - 5);
                         return 1;
@@ -232,7 +238,7 @@ namespace GameSimulation
                 else//this is the aoe section and as such doesn't require a null check on pets
                 {
                     gold -= 3;
-                    foodshop[posShop - 5].OnConsume(null, this); //this should only be active with aoe buffs
+                    foodshop[posShop - 5].OnConsume(null, this, postoBuy); //this should only be active with aoe buffs
                     foodshop[posShop - 5] = null;
                     FoodShopRealignRight(posShop - 5);
                     return 1;
@@ -517,7 +523,7 @@ namespace GameSimulation
 
         public Pets RandomPet(int i)
         {
-            return Pets.PetsGen(i, Cans, Cans);
+            return Pets.PetsGen(i, Cans, Cans * 2);
         }
 
         public Food RandomFood(int i)
@@ -564,20 +570,18 @@ namespace GameSimulation
             environmentArray[2,2,0] = Lives;
             environmentArray[2, 4, 0] = gold;
             environmentArray[2, 2, 1] = wins;
-            if (TurnStartFlag)
-            {
-                environmentArray[2, 2, 2] = 1;
-            }
+            environmentArray[2, 2, 2] = Convert.ToInt32(TurnStartFlag);
+            environmentArray[2, 3, 1] = Convert.ToInt32(PassFlag);
 
 
 
             /* in the case of an all ant team with honeys and 4 xp (so +4/+4) 
              * and an all horse shop and 1 apple on turn 4 with 10 gold
-             * with 3 wins and 2 lives with the turn having just started
+             * with 3 wins and 2 lives with the turn having just started p represents pass flag which would be a 0
              *  
              * 1,1,1,1,1    5,5,5,5,5   6,6,6,6,6  1,1,1,1,1  4,4,4,4,4
              * 6,6,6,6,6  x 1,1,1,1,1 x 2,2,2,2,2 x0,0,0,0,0 x0,0,0,0,0
-             * 0,1,2,4,10   0,0,3,0,0   0,0,0,0,0  0,0,0,0,0  0,0,0,0,0
+             * 0,1,2,4,10   0,0,3,p,0   0,0,1,0,0  0,0,0,0,0  0,0,0,0,0
              * 
              * 
              */
@@ -592,6 +596,7 @@ namespace GameSimulation
         }
         private void Pass()
         {
+            PassFlag = true;
             if (gold <= 3)
             {
                 this.Turnend();
@@ -625,7 +630,7 @@ namespace GameSimulation
                     PetsNames P;
                     if(Enum.TryParse(words[i],true, out P))
                     {
-                        shopPets[i] = Pets.PetsGen((int)P , cans, cans);
+                        shopPets[i] = Pets.PetsGen((int)P , Cans, Cans * 2);
                     }
                 }
             }
@@ -658,7 +663,8 @@ namespace GameSimulation
         public int[,,] ProcessMessage(string Message)
         {
             TurnStartFlag = false;
-            if(Message == "PAS")
+            PassFlag = false;
+            if (Message == "PAS")
             {
                 this.Pass();
             }
@@ -691,10 +697,6 @@ namespace GameSimulation
                         this.Turnend();
                         break;
                 }
-                
-                    
-                
-
             }
 
 

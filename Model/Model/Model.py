@@ -264,8 +264,10 @@ class AutoPetsEnv(py_environment.PyEnvironment):
             self._episode_ended = True;
             return ts.termination(self._state, self.rewardCalc())
         else:
-            if(self._state[2,2,2] == 1):
+            if(self._state[2,2,2] == 1): #round end
                 partial = self.rewardCalc()
+            elif self._state[2,3,1] == 1: #this means the last action was a pass
+                partial = -1 # there should be a mild punishment for passing
             else:
                 partial = 0
             return ts.transition(self._state, reward=partial, discount=1.0)
@@ -393,7 +395,7 @@ def main():
 
     learn = True;
 
-    n_games = 2000
+    n_games = 5000
 
     if learnInput.upper() == "T":
         learn = False;
