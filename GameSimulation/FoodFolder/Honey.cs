@@ -15,7 +15,7 @@ namespace GameSimulation.FoodFolder
 
         }
 
-        public override void OnConsume(Pets Pet, Environment env)
+        public override void OnConsume(Pets Pet, Environment env, int loc)
         {
             if (Pet != null)
             {

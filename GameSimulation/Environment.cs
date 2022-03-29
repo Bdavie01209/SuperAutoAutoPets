@@ -18,7 +18,7 @@ namespace GameSimulation
         public int Turn;
         public int gold;
         public int wins;
-        public int Cans { get => Cans; set => Cans = value; }
+        public int Cans { get; set; }
         public int Lives;
         bool selfcontrol;
         public bool render;
