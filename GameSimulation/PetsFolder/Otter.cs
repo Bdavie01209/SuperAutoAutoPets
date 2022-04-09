@@ -8,7 +8,7 @@ namespace GameSimulation.PetsFolder
 {
     public class Otter : Pets
     {
-        public override PetsNames Name => PetsNames.Otter;
+        public override pets Name => pets.Otter;
 
         public Otter(int hp, int att)
         {

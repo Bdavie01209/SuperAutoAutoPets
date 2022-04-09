@@ -9,7 +9,7 @@ namespace GameSimulation.PetsFolder
 {
     public class Ant : Pets
     {
-        public override PetsNames Name { get => PetsNames.Ant; }
+        public override pets Name { get => pets.Ant; }
 
         public Ant(int ExtraHp, int ExtraAtt)
         {
@@ -56,6 +56,7 @@ namespace GameSimulation.PetsFolder
                     team[x].Hp += 1;
                     break;
             }
+            team[pos] = this;
             base.Onfaint(team, enemy, pos);
         }
     }

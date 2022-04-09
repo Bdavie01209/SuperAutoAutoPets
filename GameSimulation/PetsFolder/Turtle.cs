@@ -6,28 +6,26 @@ using System.Threading.Tasks;
 
 namespace GameSimulation.PetsFolder
 {
-    public class Rat : Pets
+    public class Turtle : Pets
     {
-        public override pets Name => pets.Rat;
+        public override pets Name => pets.Turtle;
 
-        public Rat(int hp, int att)
+        public Turtle(int hp, int att)
         {
-            this.Hp = 5 + hp;
-            this.Attack = 4 + att;
+            this.Hp = 2 + hp;
+            this.Attack = 1 + att;
         }
 
         public override void Onfaint(Pets[] team, Pets[] enemy, int pos)
         {
             base.Onfaint(team, enemy, pos);
-            int rats = this.Level();
-            for (int i = 4; i >= 0; i--)
+            for(int i = 1; i < this.Level() + 1; i++)
             {
-                if (enemy[i] == null)
+                if (pos - i >= 0)
                 {
-                    enemy[i] = new ZombieCricket(0,0);
-                    if (rats == 0)
+                    if (team[pos - i] != null)
                     {
-                        i -= 50;
+                        team[pos - i].Equip = equipment.Melon;
                     }
                 }
             }

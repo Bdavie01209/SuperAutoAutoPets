@@ -182,7 +182,7 @@ namespace GameSimulation
             {
                 if (Team[i] != null)
                 {
-                    Team[i].OnTurnEnd(this);
+                    Team[i].OnTurnEnd(this, i);
                 }
             }
             if (selfcontrol)
@@ -627,7 +627,7 @@ namespace GameSimulation
                 }
                 else
                 {
-                    PetsNames P;
+                    pets P;
                     if(Enum.TryParse(words[i],true, out P))
                     {
                         shopPets[i] = Pets.PetsGen((int)P , Cans, Cans * 2);

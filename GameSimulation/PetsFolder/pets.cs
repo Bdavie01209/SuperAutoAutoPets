@@ -13,7 +13,51 @@ namespace GameSimulation
         {
             return petNumber switch
             {
-                //tier 3
+                //tier 6
+                57 => new Tiger(ExtraHp, ExtraAttack),
+                56 => new Snake(ExtraHp, ExtraAttack),
+                55 => new Mammoth(ExtraHp, ExtraAttack),
+                54 => new Leopard(ExtraHp, ExtraAttack),
+                53 => new Gorilla(ExtraHp, ExtraAttack),
+                52 => new Fly(ExtraHp, ExtraAttack),
+                51 => new Dragon(ExtraHp, ExtraAttack),
+                50 => new Cat(ExtraHp, ExtraAttack),
+                49 => new Boar(ExtraHp, ExtraAttack),
+
+                //tier 5
+                48 => new Turkey(ExtraHp, ExtraAttack),
+                47 => new Shark(ExtraHp, ExtraAttack),
+                46 => new Seal(ExtraHp, ExtraAttack),
+                45 => new Scorpion(ExtraHp, ExtraAttack),
+                44 => new Rhino(ExtraHp, ExtraAttack),
+                43 => new Monkey(ExtraHp, ExtraAttack),
+                42 => new Crocodile(ExtraHp, ExtraAttack),
+                41 => new Cow(ExtraHp, ExtraAttack),
+
+                //tier 4 
+                40 => new Worm(ExtraHp, ExtraAttack),
+                39 => new Whale(ExtraHp, ExtraAttack),
+                38 => new Squirrel(ExtraHp, ExtraAttack),
+                37 => new Skunk(ExtraHp, ExtraAttack),
+                36 => new Rooster(ExtraHp, ExtraAttack),
+                35 => new Penguin(ExtraHp, ExtraAttack),
+                34 => new Parrot(ExtraHp, ExtraAttack),
+                33 => new Hippo(ExtraHp, ExtraAttack),
+                32 => new Dolphin(ExtraHp, ExtraAttack),
+                31 => new Deer(ExtraHp, ExtraAttack),
+                30 => new Bison(ExtraHp, ExtraAttack),
+                
+                //tier 3    
+                29 => new Turtle(ExtraHp, ExtraAttack),
+                28 => new Snail(ExtraHp, ExtraAttack),
+                27 => new Sheep(ExtraHp, ExtraAttack),
+                26 => new Bunny(ExtraHp, ExtraAttack),
+                25 => new Ox(ExtraHp, ExtraAttack),
+                24 => new Kangaroo(ExtraHp, ExtraAttack),
+                23 => new Giraffe(ExtraHp, ExtraAttack),
+                22 => new Dog(ExtraHp, ExtraAttack),
+                21 => new Camel(ExtraHp, ExtraAttack),
+                20 => new Blowfish(ExtraHp, ExtraAttack),
                 19 => new Badger(ExtraHp, ExtraAttack),
 
                 //tier 2
@@ -41,7 +85,7 @@ namespace GameSimulation
             };
         }
 
-        protected int Level()
+        public int Level()
         {
             switch (Xp)
             {
@@ -72,8 +116,21 @@ namespace GameSimulation
             {
                 team[pos] = null;
             }
+            if (pos > 0)
+            {
+                if (team[pos -1] != null)
+                {
+                    team[pos - 1].OnFriendAheadFaints(team, enemy, pos - 1);
+                }
+            }
 
         }
+
+        public virtual void OnFriendAheadFaints(Pets[] team, Pets[] enemy, int loc)
+        {
+            // do nothing
+        }
+
         public virtual void OnDamage(int damage, Pets[] team, Pets[] enemy, int loc)
         {
             if (Equip == equipment.Melon)
@@ -143,7 +200,7 @@ namespace GameSimulation
         {
             //base case do nothing
         }
-        public virtual void OnTurnEnd(Environment env)
+        public virtual void OnTurnEnd(Environment env, int pos)
         {
             //base case do nothing
         }
@@ -211,7 +268,7 @@ namespace GameSimulation
 
             }
         }
-        public abstract PetsNames Name { get; }
+        public abstract pets Name { get; }
 
         public virtual int[] PetValues()
         {
@@ -220,7 +277,7 @@ namespace GameSimulation
 
         public virtual Pets Clone()
         {
-            Pets P = PetsGen((int)this.Name - 1, 0, 0);
+            Pets P = PetsGen((int)Name, 0, 0);
             P.Attack = this.Attack;
             P.Hp = this.Hp;
             P.Equip = this.Equip;

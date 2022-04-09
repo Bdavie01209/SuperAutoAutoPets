@@ -8,7 +8,7 @@ namespace GameSimulation.PetsFolder
 {
     public class Beaver : Pets
     {
-        public override PetsNames Name { get => PetsNames.Beaver; }
+        public override pets Name { get => pets.Beaver; }
 
         public Beaver(int ExtraHp, int ExtraAtt)
         {

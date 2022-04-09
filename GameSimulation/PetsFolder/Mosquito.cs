@@ -9,7 +9,7 @@ namespace GameSimulation.PetsFolder
     public class Mosquito : Pets
     {
         private Random rn;
-        public override PetsNames Name => PetsNames.Mosquito;
+        public override pets Name => pets.Mosquito;
 
         public Mosquito(int hp, int at)
         {

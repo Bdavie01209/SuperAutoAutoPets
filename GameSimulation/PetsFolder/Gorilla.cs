@@ -6,27 +6,29 @@ using System.Threading.Tasks;
 
 namespace GameSimulation.PetsFolder
 {
-    public class Peacock : Pets
+    public class Gorilla : Pets
     {
-        public override pets Name => pets.Peacock;
+        public override pets Name => pets.Gorilla;
+        int hurtCount = 0;
 
-        public Peacock(int hp, int att)
+        public Gorilla(int hp, int att)
         {
-            this.Hp = 5 + hp;
-            this.Attack = 2 + att;
+            this.Hp = 9 + hp;
+            this.Attack = 6 + att;
         }
 
         public override void OnDamage(int damage, Pets[] team, Pets[] enemy, int loc)
         {
             base.OnDamage(damage, team, enemy, loc);
-            if (team[loc] != null)
+            if(team[loc] != null)
             {
-                for (int i = 0; i < this.Level(); i++)
+                if (hurtCount < this.Level())
                 {
-                    this.Attack = this.Attack + (this.Attack / 2);
+                    this.Equip = equipment.Melon;
                 }
             }
         }
+
 
     }
 }

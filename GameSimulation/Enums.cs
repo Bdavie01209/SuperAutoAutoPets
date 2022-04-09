@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameSimulation
 {
-    public enum PetsNames
+    public enum pets
     {
         Ant,
         Beaver,
@@ -73,7 +73,6 @@ namespace GameSimulation
         Tiger,
 
         Bus,
-        Butterfly,
         Chick,
         ZombieCricket,
         DirtyRat,

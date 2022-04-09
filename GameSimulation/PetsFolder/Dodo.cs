@@ -8,7 +8,7 @@ namespace GameSimulation.PetsFolder
 {
     public class Dodo :Pets
     {
-        public override PetsNames Name => PetsNames.Dodo;
+        public override pets Name => pets.Dodo;
 
         public Dodo(int hp, int at)
         {

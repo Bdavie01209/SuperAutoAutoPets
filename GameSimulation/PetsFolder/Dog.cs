@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace GameSimulation.PetsFolder
 {
-    public class Shrimp : Pets
+    public class Dog : Pets
     {
-        public override pets Name => pets.Shrimp;
+        public override pets Name => pets.Dog;
 
-        public Shrimp(int hp, int att)
+        public Dog(int hp, int att)
         {
-            this.Hp = 3 + hp;
-            this.Hp = 3 + att;
+            this.Hp = 2 + hp;
+            this.Attack = 2 + att;
         }
     }
 }
