@@ -37,12 +37,12 @@
 693, 490 top left of health in position 1
 730, 525 bottom right of health in posistion 1
 
+		
 
-
-
-
-
-
+189,44 top left of player hp
+311,117 bottom right of player hp
+344, 44 top left of trophies
+537,116 bottom left of trophies
 
 
 

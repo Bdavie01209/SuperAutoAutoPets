@@ -190,8 +190,20 @@ def buyslot(shoppos, slotalpha):
 
 
 def checkWin():
-	print("waiting for Win/Lose/Draw")
-	return keyboard.read_key()
+	try:
+		loc = pyautogui.locateOnScreen("lives.PNG", confidence=0.97)
+	except:
+		print("Loss registered")
+		return "L"
+		pass
+	try:
+		loc = pyautogui.locateOnScreen("wins.PNG", confidence=0.97)
+	except:
+		print("Win registerd")
+		return "W"
+		pass
+	print("Draw registered")
+	return "D"
 
 
 
@@ -210,6 +222,8 @@ def endTurn():
 	time.sleep(1)
 	Click((1200,700))
 	TurnDone = False
+	pyautogui.screenshot("lives.PNG",region = (189,44,122,73))
+	pyautogui.screenshot("wins.PNG",region = (344,44,193,73))
 	while TurnDone != True:
 		try:
 			loc = pyautogui.locateOnScreen("endturnscreen.PNG", confidence=0.97)
@@ -274,8 +288,6 @@ def receivemessage(message):
 		sendMessage(sellthenbuy(messageinfo[:][1:3]))
 	elif message[0:3] == "CLO":
 		commSocket.close()
-
-
 
 while not commSocket._closed:
 	receivemessage(commSocket.recv(1024).decode("utf-8"))

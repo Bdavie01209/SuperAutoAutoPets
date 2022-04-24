@@ -395,7 +395,7 @@ def main():
 
     learn = True;
 
-    n_games = 5000
+    n_games = 30000
 
     if learnInput.upper() == "T":
         learn = False;

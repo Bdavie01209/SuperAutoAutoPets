@@ -15,7 +15,7 @@ namespace GameSimulation
     {
         int bytecount;
         NetworkStream stream;
-        byte[] sendData;
+        byte[] sendData;    
         TcpClient client;
 
 
