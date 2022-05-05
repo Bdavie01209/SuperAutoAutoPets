@@ -190,20 +190,16 @@ def buyslot(shoppos, slotalpha):
 
 
 def checkWin():
-	try:
-		loc = pyautogui.locateOnScreen("lives.PNG", confidence=0.97)
-	except:
+	returnstring = "d"
+	if(pyautogui.locateOnScreen("lives.PNG", confidence=0.97) == None):
 		print("Loss registered")
-		return "L"
-		pass
-	try:
-		loc = pyautogui.locateOnScreen("wins.PNG", confidence=0.97)
-	except:
+		returnstring = "L"
+	elif(pyautogui.locateOnScreen("wins.PNG", confidence=0.97) == None):
 		print("Win registerd")
-		return "W"
-		pass
-	print("Draw registered")
-	return "D"
+		returnstring = "W"
+	else:
+		print("Draw registered")
+	return returnstring
 
 
 

@@ -80,12 +80,15 @@ class AutoPetsEnv(py_environment.PyEnvironment):
 
     def rewardCalc(self):
         avgTeam = 0.0
+        numEmpty = 0
         for y in range(5):
+            if self._state[0,y,0] == 0:
+                numEmpty += 1
             for z in range(1,3):
                 avgTeam += self._state[0,y,z]
         avgTeam = avgTeam/10.0
-        #current turn + average team attack/hp + wins * 2
-        reward = self._state[2,3,0] + avgTeam + (self._state[2,2,1] * 2)
+        #current turn * 5 + average team attack/hp * 10 + wins * 20 - numEmpty * 5
+        reward = (self._state[2,3,0] * 5) + (avgTeam * 10) + (self._state[2,2,1] * 20) - (numEmpty * 5)
         return reward
     
     def _reset(self):
@@ -391,7 +394,7 @@ def main():
     env = AutoPetsEnv()
     #utils.validate_py_environment(env, episodes=15)
 
-    learnInput = input("learn or test: ")
+    learnInput = input("(L)earn or (T)est: ")
 
     learn = True;
 
